@@ -1,0 +1,163 @@
+#
+# $Id$
+# This file contains relations for operators, and the guesstimation
+# ontology.
+#
+
+
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix cyc: <http://sw.cyc.com/concept/>.
+@prefix ocyc: <http://sw.opencyc.org/concept/>.
+@prefix cycAnnot: <http://sw.cyc.com/CycAnnotations_v1#>.
+@prefix wns: <http://www.w3.org/2006/03/wn/wn20/schema/>.
+@prefix wni: <http://www.w3.org/2006/03/wn/wn20/instances/>.
+@prefix gu: <http://www.inf.ed.ac.uk/2009/06/01/guesstimation/> .
+@prefix dbo: <http://dbpedia.org/ontology/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+# Property definitions
+gu:prologSymbol		a									rdfs:Property ;
+					rdfs:subPropertyOf					rdfs:label ;
+					rdfs:domain							ocyc:Mx4rvViAqpwpEbGdrcN5Y29ycA ;
+					rdfs:comment						"The relation that maps a unit of measure to a symbol in Prolog that represents it." .
+
+gu:scaleFactor      a                                   rdfs:Property ;
+					rdfs:domain							ocyc:Mx4rvViAqpwpEbGdrcN5Y29ycA ;
+					rdfs:comment						"The scale of some unit relative to a base unit." ;
+					rdfs:range							xsd:float.
+
+# Custom class type for "typical example" entities
+gu:Epsilon          rdfs:subClassOf                     owl:Thing ;
+                    rdfs:comment                        "A typical example of a member of a class" ;
+                    rdfs:label                          "Epsilon".
+
+gu:System           rdf:type                            owl:Thing ;
+                    rdfs:comment                        "A thing representing the Guesstimation system, used in reification.";
+                    rdfs:label                          "System".
+                    
+gu:User             rdfs:subClassOf						foaf:Person ;
+					rdfs:comment						"A person who interacts with the Guesstimation system" ;
+					rdfs:label							"GuesstimationUser" .
+					
+gu:CurrentUser      rdf:type							gu:User ;
+					rdfs:comment						"The current user of the Guesstimation System" ;
+					rdfs:label							"Guesstimator" .
+
+gu:oom				rdf:type							ocyc:Mx4rQ-Ffxj-XQdeRMsuOebkIHQ ;
+					rdfs:comment						"Order of magnitude datatype";
+					rdfs:label							"OrderOfMagnitude" .
+
+gu:units			rdf:type							rdfs:Property;
+					rdfs:comment						"Measurements units for a value";
+					rdfs:label							"ScaleUnits".
+
+gu:GuesstimationTechnique rdf:subClassOf                owl:Thing ;
+					rdfs:label							"GuesstimationTechnique".
+					
+gu:Aggregation		rdf:type							gu:GuesstimationTechnique.
+
+gu:Function			rdf:type							gu:GuesstimationTechnique.
+
+# Distance mappings, including scales relative to metres
+ocyc:Mx4rvVjRp5wpEbGdrcN5Y29ycA		gu:prologSymbol	"m" ;
+									gu:scaleFactor  "1.0"^^xsd:float ;
+									owl:sameAs      dbo:metre.
+
+ocyc:Mx4rvVjBYZwpEbGdrcN5Y29ycA		gu:prologSymbol "km" ;
+									gu:scaleFactor  "1000"^^xsd:float ;
+									owl:sameAs		dbo:kilometre.
+
+ocyc:Mx8Ngh4rvViLE5wpEbGdrcN5Y29ycB4rvVjRp5wpEbGdrcN5Y29ycA
+									gu:prologSymbol "mm" ;
+									gu:scaleFactor  "0.001"^^xsd:float ;
+									owl:sameAs		dbo:millimetre .
+
+ocyc:Mx8Ngh4rvViK0ZwpEbGdrcN5Y29ycB4rvVjRp5wpEbGdrcN5Y29ycA
+									gu:prologSymbol "cm" ;
+									gu:scaleFactor  "0.01"^^xsd:float ;
+									owl:sameAs		dbo:centimetre .
+
+ocyc:Mx4rvVig45wpEbGdrcN5Y29ycA		gu:prologSymbol "ft" ;
+									gu:scaleFactor  "0.3048"^^xsd:float.
+									
+ocyc:Mx4rvVihIJwpEbGdrcN5Y29ycA      gu:prologSymbol "in" .
+ocyc:Mx4rvVihIJwpEbGdrcN5Y29ycA      gu:scaleFactor  "0.0254"^^xsd:float.
+ocyc:Mx4rvVi3VJwpEbGdrcN5Y29ycA      gu:prologSymbol "mi" .
+ocyc:Mx4rvVi3VJwpEbGdrcN5Y29ycA      gu:scaleFactor  "1609.344"^^xsd:float.
+
+# Area mappings to units, including scales relative to square metres
+ocyc:Mx4rvVj-EJwpEbGdrcN5Y29ycA      gu:prologSymbol "sq_m" .
+ocyc:Mx4rvVj-EJwpEbGdrcN5Y29ycA      gu:scaleFactor "1.0"^^xsd:float .
+ocyc:Mx4rvWTQFJwpEbGdrcN5Y29ycA      gu:prologSymbol "sq_cm" .
+ocyc:Mx4rvWTQFJwpEbGdrcN5Y29ycA      gu:scaleFactor "0.0001"^^xsd:float .
+ocyc:Mx4rvVjDSpwpEbGdrcN5Y29ycA		gu:prologSymbol "sq_ft" .
+ocyc:Mx4rvVjDSpwpEbGdrcN5Y29ycA		gu:scaleFactor "0.09290304"^^xsd:float .
+ocyc:Mx4rvVjChZwpEbGdrcN5Y29ycA      gu:prologSymbol "sq_in" .
+ocyc:Mx4rvVjChZwpEbGdrcN5Y29ycA      gu:scaleFactor "0.00064516"^^xsd:float .
+ocyc:Mx4rwCm1NpwpEbGdrcN5Y29ycA		gu:prologSymbol "sq_km" .
+ocyc:Mx4rwCm1NpwpEbGdrcN5Y29ycA		gu:scaleFactor "1000000"^^xsd:float .
+ocyc:Mx4rvVkEI5wpEbGdrcN5Y29ycA      gu:prologSymbol "sq_mi" .
+ocyc:Mx4rvVkEI5wpEbGdrcN5Y29ycA      gu:scaleFactor "2589988.11"^^xsd:float .
+
+# Time mappings to units, including scales relative to seconds
+ocyc:Mx4rvVjrsZwpEbGdrcN5Y29ycA      gu:prologSymbol "sec" .
+ocyc:Mx4rvVjrsZwpEbGdrcN5Y29ycA      gu:scaleFactor "1.0"^^xsd:float .
+ocyc:Mx4rvVjqr5wpEbGdrcN5Y29ycA		gu:prologSymbol "day" .
+ocyc:Mx4rvVjqr5wpEbGdrcN5Y29ycA		gu:scaleFactor "86400"^^xsd:float .
+ocyc:Mx4rvVjrNJwpEbGdrcN5Y29ycA		gu:prologSymbol "hr" .
+ocyc:Mx4rvVjrNJwpEbGdrcN5Y29ycA		gu:scaleFactor "3600"^^xsd:float .
+
+ocyc:Mx4rvVjrc5wpEbGdrcN5Y29ycA		gu:prologSymbol "min" ;
+									gu:scaleFactor "60"^^xsd:float ;
+									owl:sameAs     dbo:minute .
+									
+ocyc:Mx4rvVjyV5wpEbGdrcN5Y29ycA     gu:prologSymbol "yr" ;
+ 									gu:scaleFactor "31536000.0"^^xsd:float .
+ 									
+# Mass mappings to units, including scales relative to kg
+ocyc:Mx4rvVi5sJwpEbGdrcN5Y29ycA      gu:prologSymbol "kg" ;
+									 gu:scaleFactor "1.0"^^xsd:float ;
+									 owl:sameAs		dbo:kilogram .
+									 
+ocyc:Mx4rvVjWwJwpEbGdrcN5Y29ycA      gu:prologSymbol "g" .
+ocyc:Mx4rvVjWwJwpEbGdrcN5Y29ycA      gu:scaleFactor "0.001"^^xsd:float .
+
+ocyc:Mx4rvVkLYZwpEbGdrcN5Y29ycA      gu:prologSymbol "lb" ;
+									gu:scaleFactor "0.45359237"^^xsd:float ;
+									owl:sameAs		dbo:pound.
+
+# Volume mappings
+ocyc:Mx4rvVj0SpwpEbGdrcN5Y29ycA      gu:prologSymbol "l" .
+ocyc:Mx4rvVj0SpwpEbGdrcN5Y29ycA      gu:scaleFactor  "1.0"^^xsd:float .
+
+ocyc:Mx4rvViQA5wpEbGdrcN5Y29ycA		 gu:prologSymbol "cu_m" ;
+									 gu:scaleFactor  "1000.0"^^xsd:float .
+
+ocyc:Mx4rvVihHJwpEbGdrcN5Y29ycA      gu:prologSymbol "cu_cm" ;
+									 gu:scaleFactor  "0.001"^^xsd:float .
+									 
+ocyc:Mx4rxGkwDgwMQdmHjv2_XNJ5zA      gu:prologSymbol "cu_km" ;
+									 gu:scaleFactor  "1000000000000.0"^^xsd:float .
+
+ocyc:Mx8Ngh4rvViLE5wpEbGdrcN5Y29ycB4rvVj0SpwpEbGdrcN5Y29ycA    gu:prologSymbol "ml" ;
+									 gu:scaleFactor  "0.001"^^xsd:float .
+									 
+ocyc:Mx4rvVjW4ZwpEbGdrcN5Y29ycA		 gu:prologSymbol "cu_ft" ;
+								     gu:scaleFactor  "28.3168"^^xsd:float .
+								     
+ocyc:Mx4r0k9pOv_yQdeVle-shSN6qQ      gu:prologsymbol "cu_in" ;
+									 gu:scaleFactor  "0.016387"^^xsd:float .
+									 
+ocyc:Mx4rvVi3kZwpEbGdrcN5Y29ycA      gu:prologSymbol "cu_mi" ;
+									 gu:scaleFactor  "4168181830000"^^xsd:float .
+									 
+ocyc:Mx4rvVj1V5wpEbGdrcN5Y29ycA      gu:prologSymbol "gal" ;  #Note --- UK/Imperial Gallon. cf. US Gallon
+                                     gu:scaleFactor  "4.54609188"^^xsd:float .                        
+                                     
+# Dimensionless
+xsd:long      gu:prologSymbol "cnt" .
+xsd:long      gu:scaleFactor "1.0"^^xsd:float .

@@ -1,0 +1,41 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix cyc: <http://sw.cyc.com/concept/> .
+@prefix ocyc: <http://sw.opencyc.org/concept/> .
+@prefix cycAnnot: <http://sw.cyc.com/CycAnnotations_v1#> .
+@prefix wn20schema: <http://www.w3.org/2006/03/wn/wn20/schema/> .
+@prefix wn20instances: <http://www.w3.org/2006/03/wn/wn20/instances/> .
+@prefix fb: <http://www4.wiwiss.fu-berlin.de/factbook/ns#> .
+@prefix dbo: <http://dbpedia.org/ontology/> .
+@prefix dbp: <http://dbpedia.org/property/> .
+
+
+# Map population properties to OpenCyc 'numberOfInhabitants' predicate
+dbo:populationTotal rdfs:subPropertyOf
+                       ocyc:Mx4rvVjy1pwpEbGdrcN5Y29ycA .
+dbp:populationCensus rdfs:subPropertyOf
+                       ocyc:Mx4rvVjy1pwpEbGdrcN5Y29ycA .
+dbp:population rdfs:subPropertyOf
+                       ocyc:Mx4rvVjy1pwpEbGdrcN5Y29ycA .
+dbp:populationEstimate rdfs:subPropertyOf
+                       ocyc:Mx4rvVjy1pwpEbGdrcN5Y29ycA .
+fb:population_total rdfs:subPropertyOf
+                       ocyc:Mx4rvVjy1pwpEbGdrcN5Y29ycA .
+
+
+# I can't believe this one is missing from OpenCyc
+ocyc:Mx4rvVijQZwpEbGdrcN5Y29ycA owl:sameAs <http://www4.wiwiss.fu-berlin.de/factbook/resource/China> .
+
+# These relations introduce mappings between WordNet synsets and
+# hyponyms, and roughly-equivalent RDFS concepts. These
+# mappings are consistent with the suggested mappings in
+# ########!!!!!!!! INSERT REFERENCE HERE !!!!!!!!!######
+wn20schema:Synset rdfs:subClassOf rdfs:Class .
+wn20schema:hyponymOf rdfs:subPropertyOf rdfs:subClassOf .
+
+# Map the WordNet relation in OpenCyc to owl:sameAs to allow
+# inference across these two data sets.
+ocyc:Mx4riWVFR6HJSpaEaHrcWS3MSA  rdfs:subPropertyOf   owl:sameAs .

@@ -1,0 +1,17 @@
+-rw-r--r--   1 jabourbih  jabourbih  156976323  6 Jun 22:50 opencyc-latest.owl
+-rw-r--r--   1 jabourbih  jabourbih        202  9 Jun 15:22 .project
+-rw-r--r--   1 jabourbih  jabourbih        772  9 Jun 18:32 opencyc-data-to-cycl.xslt
+-rw-r--r--@  1 jabourbih  jabourbih    7597553 11 Jun 14:23 factbook.rdf
+-rw-r--r--   1 jabourbih  jabourbih        219 12 Jun 14:30 sample.ttl
+-rw-r--r--   1 jabourbih  jabourbih        396 12 Jun 14:36 sample.xml
+lrwxr-xr-x   1 jabourbih  jabourbih         50 18 Jun 12:06 owl.owl -> /opt/local/lib/swipl-5.6.63/library/semweb/owl.owl
+-rw-r--r--   1 jabourbih  jabourbih     259244 18 Jun 14:31 dbpedia-ontology.owl
+-rw-r--r--   1 jabourbih  jabourbih    6139684 18 Jun 14:31 dbpedia2cyc.ttl
+-rw-r--r--   1 jabourbih  jabourbih      33648 18 Jun 14:32 links_factbook_en.ttl
+-rw-r--r--   1 jabourbih  jabourbih   11381782 18 Jun 15:39 infoboxproperties_en.ttl
+drwxr-xr-x  12 jabourbih  jabourbih        408 18 Jun 15:39 .cache
+-rw-r--r--   1 jabourbih  jabourbih       1316 22 Jun 11:48 fake-pop-data.ttl
+drwxr-xr-x  10 jabourbih  jabourbih        340 22 Jun 12:27 .svn
+drwxr-xr-x@ 10 jabourbih  jabourbih        340 22 Jun 12:27 ..
+-rw-r--r--   1 jabourbih  jabourbih          0 22 Jun 12:28 list-of-data-sources.txt
+drwxr-xr-x  17 jabourbih  jabourbih        578 22 Jun 12:28 .
