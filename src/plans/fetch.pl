@@ -8,8 +8,8 @@
 %% This file manages the fact retrieval mechanism
 
 :- use_module(library(readutil)).
-
-:- ensure_loaded('plans/epsilon').
+:- use_module(library('semweb/rdf_db')).
+:- ensure_loaded('epsilon').
 
 :- rdf_meta fetch(r, r, t, -), store_statement(r, r, t, r, r).
 
