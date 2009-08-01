@@ -102,6 +102,9 @@ ocyc:Mx4rwCm1NpwpEbGdrcN5Y29ycA		gu:prologSymbol "sq_km" .
 ocyc:Mx4rwCm1NpwpEbGdrcN5Y29ycA		gu:scaleFactor "1000000"^^xsd:float .
 ocyc:Mx4rvVkEI5wpEbGdrcN5Y29ycA      gu:prologSymbol "sq_mi" .
 ocyc:Mx4rvVkEI5wpEbGdrcN5Y29ycA      gu:scaleFactor "2589988.11"^^xsd:float .
+ocyc:Mx8Ngx4rva3L8JwpEbGdrcN5Y29ycB8Ngh4rvViLE5wpEbGdrcN5Y29ycB4rvVjRp5wpEbGdrcN5Y29ycB8Ngh4rvViLE5wpEbGdrcN5Y29ycB4rvVjRp5wpEbGdrcN5Y29ycA
+									gu:prologSymbol "sq_mm";
+									gu:scaleFactor "0.0000001"^^xsd:float .
 
 # Time mappings to units, including scales relative to seconds
 ocyc:Mx4rvVjrsZwpEbGdrcN5Y29ycA      gu:prologSymbol "sec" .
@@ -154,7 +157,10 @@ ocyc:Mx4r0k9pOv_yQdeVle-shSN6qQ      gu:prologsymbol "cu_in" ;
 									 
 ocyc:Mx4rvVi3kZwpEbGdrcN5Y29ycA      gu:prologSymbol "cu_mi" ;
 									 gu:scaleFactor  "4168181830000"^^xsd:float .
-									 
+
+ocyc:Mx4rvV1bj5wpEbGdrcN5Y29ycA		 gu:prologSymbol "cu_mm" ;
+									 gu:scaleFactor  "0.0000001"^^xsd:float.				 
+
 ocyc:Mx4rvVj1V5wpEbGdrcN5Y29ycA      gu:prologSymbol "gal" ;  #Note --- UK/Imperial Gallon. cf. US Gallon
                                      gu:scaleFactor  "4.54609188"^^xsd:float .                        
                                      
