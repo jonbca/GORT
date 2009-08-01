@@ -54,7 +54,6 @@ Prompt the user for missing units on a measurement from the ontology.
 fix_units(Subject, Property, Type, Value) :-
     (cyclify(Subject, EnglishSubject) -> true ; EnglishSubject = Subject ),
     (cyclify(Property, EnglishProperty) -> true ; EnglishProperty = Property),
-    warn('Missing units for: ', rdf(Subject, Property, literal(Value))),
 	writeln('No units found for: '),
 	writeln(rdf(EnglishSubject, EnglishProperty, literal(Value))),
 	prompt(_, 'units> '),
