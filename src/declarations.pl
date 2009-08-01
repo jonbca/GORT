@@ -42,3 +42,4 @@
 :- ensure_loaded('plans/fetch').
 :- ensure_loaded('plans/relativesize').
 :- ensure_loaded('plans/geographical').
+:- ensure_loaded('plans/calculations').
