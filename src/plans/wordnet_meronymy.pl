@@ -76,26 +76,9 @@ part_values([], _, []).
 part_values([PartURI | PartTail], PropertyURI, [Value | ValueTail]) :-
     part_values(PartTail, PropertyURI, ValueTail),
     (
+    	\+fetch(PartURI, PropertyURI, _, user),
     	fetch(PartURI, PropertyURI, ObjectNode, _),
     	rdf(ObjectNode, rdf:value, literal(type(xsd:float, Value)))
-    	%solve(PartURI, PropertyURI, [literal(type(_, Value)) | _])
     		-> true
     		; Value = 0
     ).
-    
-%% Utility goals to sum a list of numbers (Bratko 2001)
-sum_list( List, Sum ) :-
-    sum_list_tail(List, 0, Sum).
-
-sum_list_tail([], Sum, Sum).
-
-sum_list_tail([H | T], PartialSum, Sum) :-
-    atom(H),
-    atom_number(H, N),
-    NewPartialSum is PartialSum + N,
-    sum_list_tail(T, NewPartialSum, Sum).
-    
-sum_list_tail([H | T], PartialSum, Sum) :-
-    number(H),
-    NewPartialSum is PartialSum + H,
-    sum_list_tail(T, NewPartialSum, Sum).
