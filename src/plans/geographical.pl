@@ -90,7 +90,7 @@ figure_for_region( [RegionURI | RegionTail], Property, [region_pop(RegionURI, Fi
     figure_for_region(RegionTail, Property, FigTail).
 
 figure_for_region( [RegionURI | RegionTail], Property, Fig ) :-
-    \+population(RegionURI, _),
+    \+figure(RegionURI, Property, _),
     cyclify(RegionURI, RegionEn),
     info('Missing figure for region '), info(RegionEn),
     figure_for_region(RegionTail, Property, Fig).
