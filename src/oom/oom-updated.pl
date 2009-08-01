@@ -67,13 +67,6 @@ div(om(Mantissa1, Exponent1), om(Mantissa2, Exponent2),
     MantissaR is round((Mantissa1 / Mantissa2) * 10),
     ExponentR is Exponent1 - Exponent2 - 1.
 
-% Deal with the case where we don't know the mantissa. Technically
-% this isn't true... it should be a range between Exponent1 - Exponent2 and
-% Exponent1 - Exponent2 - 1. Will leave for now and handle later.
-div(om(unknown, Exponent1), om(unknown, Exponent2),
-	om(unknown, ExponentR)) :-
-    ExponentR is Exponent1 - Exponent2.
-
 %%%%%% Addition Rules
 
 %%%% Addition where the 2nd argument is bigger. This returns
