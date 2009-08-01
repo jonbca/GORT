@@ -7,6 +7,8 @@
 %%
 %% This file contains rewrite rules for converting units.
 
+:- use_module(library('semweb/rdf_turtle')).
+:- use_module(library('semweb/rdf_db')).
 :- ensure_loaded('../meta/cycutils').
 
 :- multifile noprove/1.

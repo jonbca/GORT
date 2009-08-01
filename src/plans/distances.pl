@@ -12,10 +12,9 @@
 :- use_module(library('semweb/rdf_db')).
 :- use_module(library('semweb/rdfs')).
 
-:- ensure_loaded('plans/wordnet_meronymy').
-:- ensure_loaded('plans/fetch').
-:- ensure_loaded('plans/conversion').
-:- ensure_loaded('plans/calculations').
+:- ensure_loaded('fetch').
+:- ensure_loaded('conversion').
+:- ensure_loaded('calculations').
 
 /** distance(+PointA, +PointB, -Distance) is det.
 Computes the great-circle distance between PointA and PointB, and places

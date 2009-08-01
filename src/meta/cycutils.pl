@@ -7,7 +7,7 @@
 %%
 %% This file contains reasoning for mapping Cyc URIs to English names.
 
-:- ensure_loaded('../meta/interpreter').
+:- ensure_loaded('interpreter').
 :- use_module(library('semweb/rdf_db')).
 
 :- multifile noprove/1.

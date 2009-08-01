@@ -7,7 +7,11 @@
 %%
 %% Plan for calculating the quantity of items that could go into
 %% a certain measure.
+:- use_module(library('semweb/rdf_db')).
+:- ensure_loaded('../declarations').
+:- rdf_meta quantity_of(r, r, r, r, -).
 
+% Must be same dimension!
 quantity_of(SmallerClass, SmallerPredicate, BiggerClass,
 		BiggerPredicate, literal(type(xsd:float, Guess))) :-
     fetch(SmallerClass, SmallerPredicate, ObjectNode, _),
