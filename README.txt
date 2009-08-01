@@ -8,6 +8,8 @@ http://www.swi-prolog.org/git.html
 
 for details.
 
+It has been tested with version 5.7.12 with the altered rdf_turtle.pl file.
+
 TO RUN
 ~~~~~~
 
