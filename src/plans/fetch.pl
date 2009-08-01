@@ -11,6 +11,7 @@
 :- use_module(library('semweb/rdf_db')).
 :- ensure_loaded('epsilon').
 :- ensure_loaded('../declarations').
+:- multifile fetch/4.
 
 :- rdf_meta fetch(r, r, t, -), store_statement(r, r, t, r, r).
 
@@ -120,27 +121,22 @@ fetch(Subject, Predicate, ObjectNode, Graph) :-
 
 %%%%%%%%%%%%%% Special purpose plans %%%%%%%%%%%%%%%
 
+%% Geometrical Objects
+fetch(Subject, Predicate, ObjectNode, user) :-
+	\+rdf(Subject, Predicate, _Object, user),
+	\+rdfs_individual_of(Subject, rdfs:'Class'),
+	rdfs_individual_of(Subject, ocyc:'Mx4rvVjpUZwpEbGdrcN5Y29ycA'), % Spatial thing
+	( rdfs_individual_of(Predicate, ocyc:'Mx4rvVjuYJwpEbGdrcN5Y29ycA'), !
+	 ; rdfs_individual_of(Predicate, ocyc:'Mx4rvVi5xJwpEbGdrcN5Y29ycA')
+	), % Measure 
+	s_fetch(Subject, Predicate, ObjectNode, user).
+
 %% Special plan for population
 fetch(Subject, Predicate, ObjectNode, user) :-
     \+rdf(Subject, Predicate, _Object, user),
     is_region(Subject),
    	rdf_transaction(( find_value_for_region(Subject, Predicate, Value, _),
     store_statement(Subject, Predicate, literal(type(_, Value)), gu:'Function', ObjectNode))).
-    
-%%%%%%%%%%%%%% Aggregation plans %%%%%%%%%%%%%%%
-% Do aggregation for a decomposable object (according to WordNet's partOf relations)
-%fetch(Subject, Predicate, ObjectNode, user) :-
-%    \+rdf(Subject, Predicate, _, user),
-%    \+rdfs_individual_of(Subject, rdfs:'Class'),
-%    aggregate_parts(Subject, Predicate, Aggregate),
-%    store_statement(Subject, Predicate, literal(type(xsd:long, Aggregate)), gu:'Aggregation', ObjectNode).
-
-% Do aggregation for a decomposable object, which is a Synset
-%fetch(Subject, Predicate, ObjectNode, user) :-
-%    \+rdf(Subject, Predicate, _, user),
-%    rdfs_individual_of(Subject, wns:'Synset'),
-%    aggregate_parts(Subject, Predicate, Aggregate),
-%    store_statement(Subject, Predicate, literal(type(xsd:long, Aggregate)), gu:'Aggregation', ObjectNode).
 
 %%%%%%%%%%%%%% Epsilon plans %%%%%%%%%%%%%%%
 % Compute epsilon value for a class
@@ -163,12 +159,15 @@ fetch(Class, Predicate, ObjectNode, user) :-
     \+rdfs_individual_of(Class, wns:'Synset'),
     rdfs_individual_of(Class, rdfs:'Class'),
     \+get_average_value(Class, Predicate, _),
-    ask_user(Class, Predicate, type(Type, N)),
+    % ask_user(Class, Predicate, type(Type, N)),
     rdf_transaction((
     	rdf_node(EpsilonNode),
     	rdf_assert(EpsilonNode, rdf:type, Class),
     	rdf_assert(EpsilonNode, rdf:type, gu:'Epsilon')
     )),
+    fetch(EpsilonNode, Predicate, EpObjectNode, _),
+    rdf(EpObjectNode, rdf:value, literal(type(xsd:float, N))),
+    rdf(EpObjectNode, gu:units, Type), !, 
     store_statement(EpsilonNode, Predicate, literal(type(Type, N)), gu:'CurrentUser', ObjectNode).
 
 % Ask the user for a value for an object
@@ -208,4 +207,5 @@ parse_input([Value, Symbol], Type, Value) :-
     
 parse_input([Value, '-', Value2, Symbol], Type, ValueOut) :-
     symbol_uri(Symbol, Type), !,
-    geomean([Value, Value2], ValueOut).
+    geomean([Value, Value2], ValueGM),
+    atom_number(ValueOut, ValueGM).
