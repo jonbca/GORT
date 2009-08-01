@@ -10,13 +10,18 @@
 :- use_module(library(readutil)).
 :- use_module(library('semweb/rdf_db')).
 :- ensure_loaded('epsilon').
+:- ensure_loaded('../declarations').
 
 :- rdf_meta fetch(r, r, t, -), store_statement(r, r, t, r, r).
 
 abolish_customised_ontology :-
     rdf_retractall(_,_,_,user).
 
+/** store_statement(+Subject, +Predicate, ?Object, +Graph, -ObjectNode) is det.
+Records a statement in the customised ontology, and adds its reification.
+*/
 store_statement(Subject, Predicate, literal(type(Type, Value)), Graph, ObjectNode) :-
+	\+var(Type),
     rdf_transaction((
 	    rdf_node(ObjectNode),
 	    rdf_assert(Subject, Predicate, ObjectNode),
@@ -26,6 +31,35 @@ store_statement(Subject, Predicate, literal(type(Type, Value)), Graph, ObjectNod
 	    rdf_assert(ObjectNode, gu:units, Type),
 	    reify_create(rdf(Subject, Predicate, ObjectNode), dc:source, Graph, _)
     )).
+
+% Records a statement if the units are not known. Asks the user to specify the units.
+store_statement(Subject, Predicate, literal(type(Type, Value)), Graph, ObjectNode) :-
+	var(Type),
+	fix_units(Subject, Predicate, Type, Value),
+    rdf_transaction((
+	    rdf_node(ObjectNode),
+	    rdf_assert(Subject, Predicate, ObjectNode),
+	    rdf_assert(ObjectNode, rdf:value, literal(type(xsd:float, Value))),
+	    to_om(Value, ValueOM),
+	    rdf_assert(ObjectNode, rdf:value, literal(type(gu:oom, ValueOM))),
+	    rdf_assert(ObjectNode, gu:units, Type),
+	    reify_create(rdf(Subject, Predicate, ObjectNode), dc:source, Graph, _)
+    )).
+
+/** fix_units(+Subject, +Property, -Type, +Value) is det.
+
+Prompt the user for missing units on a measurement from the ontology.
+*/
+fix_units(Subject, Property, Type, Value) :-
+    (cyclify(Subject, EnglishSubject) -> true ; EnglishSubject = Subject ),
+    (cyclify(Property, EnglishProperty) -> true ; EnglishProperty = Property),
+    warn('Missing units for: ', rdf(Subject, Property, literal(Value))),
+	writeln('No units found for: '),
+	writeln(rdf(EnglishSubject, EnglishProperty, literal(Value))),
+	prompt(_, 'units> '),
+	writeln('Enter appropriate units.'),
+	read_input_line([Units]),
+	symbol_uri(Units, Type), !.
 
 /** fetch(+Subject, +Predicate, -Object, -Graph) is nondet.
 
@@ -47,7 +81,11 @@ unit of measure for the value in the rdf:value predicate.
 fetch(Subject, Predicate, ObjectNode, user) :-
     \+rdfs_individual_of(Subject, rdfs:'Class'),
     rdf(Subject, Predicate, ObjectNode, user), !.
-    
+
+fetch(Synset, Predicate, ObjectNode, user) :-
+	rdfs_individual_of(Synset, wns:'Synset'),
+	rdf(Synset, Predicate, ObjectNode, user), !.
+
 %%%%%%%%%%%%%% General purpose plans %%%%%%%%%%%%%%%
 % Fetch epsilon value for a Class
 fetch(Class, Predicate, ObjectNode, user) :-
@@ -86,24 +124,23 @@ fetch(Subject, Predicate, ObjectNode, Graph) :-
 fetch(Subject, Predicate, ObjectNode, user) :-
     \+rdf(Subject, Predicate, _Object, user),
     is_region(Subject),
-    rdfs_subproperty_of(Predicate, ocyc:'Mx4rvVjy1pwpEbGdrcN5Y29ycA'),
-   	rdf_transaction(( find_population_of_region(Subject, PopN, _),
-    store_statement(Subject, Predicate, literal(type(xsd:long, PopN)), gu:'Function', ObjectNode))).
+   	rdf_transaction(( find_value_for_region(Subject, Predicate, Value, _),
+    store_statement(Subject, Predicate, literal(type(_, Value)), gu:'Function', ObjectNode))).
     
 %%%%%%%%%%%%%% Aggregation plans %%%%%%%%%%%%%%%
 % Do aggregation for a decomposable object (according to WordNet's partOf relations)
-fetch(Subject, Predicate, ObjectNode, user) :-
-    \+rdf(Subject, Predicate, _, user),
-    \+rdfs_individual_of(Subject, rdfs:'Class'),
-    aggregate_parts(Subject, Predicate, Aggregate),
-    store_statement(Subject, Predicate, literal(type(xsd:long, Aggregate)), gu:'Aggregation', ObjectNode).
+%fetch(Subject, Predicate, ObjectNode, user) :-
+%    \+rdf(Subject, Predicate, _, user),
+%    \+rdfs_individual_of(Subject, rdfs:'Class'),
+%    aggregate_parts(Subject, Predicate, Aggregate),
+%    store_statement(Subject, Predicate, literal(type(xsd:long, Aggregate)), gu:'Aggregation', ObjectNode).
 
 % Do aggregation for a decomposable object, which is a Synset
-fetch(Subject, Predicate, ObjectNode, user) :-
-    \+rdf(Subject, Predicate, _, user),
-    rdfs_individual_of(Subject, wns:'Synset'),
-    aggregate_parts(Subject, Predicate, Aggregate),
-    store_statement(Subject, Predicate, literal(type(xsd:long, Aggregate)), gu:'Aggregation', ObjectNode).
+%fetch(Subject, Predicate, ObjectNode, user) :-
+%    \+rdf(Subject, Predicate, _, user),
+%    rdfs_individual_of(Subject, wns:'Synset'),
+%    aggregate_parts(Subject, Predicate, Aggregate),
+%    store_statement(Subject, Predicate, literal(type(xsd:long, Aggregate)), gu:'Aggregation', ObjectNode).
 
 %%%%%%%%%%%%%% Epsilon plans %%%%%%%%%%%%%%%
 % Compute epsilon value for a class
