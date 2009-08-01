@@ -36,7 +36,7 @@
 :- ensure_loaded('meta/rdfutils').
 :- ensure_loaded('meta/cycutils').
 :- ensure_loaded('oom/oom-updated').
-:- ensure_loaded('inference/owl2').
+:- ensure_loaded('inference/owl').
 :- ensure_loaded('plans/wordnet_meronymy').
 :- ensure_loaded('plans/conversion').
 :- ensure_loaded('plans/fetch').
