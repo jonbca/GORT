@@ -129,7 +129,7 @@ fetch(Subject, Predicate, ObjectNode, user) :-
 	( rdfs_individual_of(Predicate, ocyc:'Mx4rvVjuYJwpEbGdrcN5Y29ycA')
 	 ; \+rdfs_individual_of(Predicate, ocyc:'Mx4rvVjuYJwpEbGdrcN5Y29ycA'),
 	     rdfs_individual_of(Predicate, ocyc:'Mx4rvVi5xJwpEbGdrcN5Y29ycA')
-	),  % Measure 
+	), % Measure 
 	s_fetch(Subject, Predicate, ObjectNode, user).
 
 %% Special plan for population
@@ -181,7 +181,17 @@ fetch(Class, Predicate, ObjectNode, user) :-
 fetch(Subject, Predicate, ObjectNode, user) :-
     \+rdf(Subject, Predicate, _, user),
     \+rdfs_individual_of(Subject, rdfs:'Class'),
+    \+rdfs_individual_of(Subject, gu:'Epsilon'),
     ask_user(Subject, Predicate, type(Type, N)),
+    store_statement(Subject, Predicate, literal(type(Type, N)), gu:'CurrentUser', ObjectNode).
+
+fetch(Subject, Predicate, ObjectNode, user) :-
+    \+rdf(Subject, Predicate, _, user),
+    \+rdfs_individual_of(Subject, rdfs:'Class'),
+    rdf(Subject, rdf:type, gu:'Epsilon'),
+    once((rdf(Subject, rdf:type, Class),
+    	Class \= 'http://www.inf.ed.ac.uk/2009/06/01/guesstimation/Epsilon')),
+    ask_user(Class, Predicate, type(Type, N)),
     store_statement(Subject, Predicate, literal(type(Type, N)), gu:'CurrentUser', ObjectNode).
 
 %%%%%%%%%%%%%% End of Fetch plans %%%%%%%%%%%%%%%
