@@ -78,7 +78,7 @@ s_fetch(Subject, Predicate, ObjectNode, user) :-
 	rdf(ObjectNodeR, rdf:value, literal(type(xsd:float, Value))),
 	rdf(ObjectNodeR, gu:units, Units),
 	!,
-	atom_number(Value, N),
+	( number(Value) -> N = Value ; atom_number(Value, N) ),
 	Diameter is 2 * N,
 	store_statement(Subject, Predicate, literal(type(Units, Diameter)), gu:'Geometry', ObjectNode).
 
