@@ -104,7 +104,59 @@ s_fetch(Subject, Predicate, ObjectNode, user) :-
 	Area is LengthC * WidthN,
 	area_units_for_length(WidthUnits, AreaUnits),
 	store_statement(Subject, Predicate, literal(type(AreaUnits, Area)), gu:'Geometry', ObjectNode).
-	
+
+s_fetch(Subject, Predicate, ObjectNode, user) :-
+	\+rdfs_individual_of(Subject, ocyc:'Mx4rwQBfkZwpEbGdrcN5Y29ycA'), % RoundObject
+	rdfs_subproperty_of(Predicate, ocyc:'Mx4rvveoTpwpEbGdrcN5Y29ycA'), % surfaceAreaOfWholeObject
+	rdfs_individual_of(Subject, ocyc:'Mx4r1jUXeq00EdmAAAACs0uFOQ'), % ThreeDimensionalThing
+	!,
+	fetch(Subject, ocyc:'Mx4rvVjbZpwpEbGdrcN5Y29ycA', LengthNode, _), % lengthOfObject
+	fetch(Subject, ocyc:'Mx4rvVjgA5wpEbGdrcN5Y29ycA', WidthNode, _), % widthOfObject
+	fetch(Subject, ocyc:'Mx4rvViZ85wpEbGdrcN5Y29ycA', DepthNode, _), % depthOfObject
+	%% Extract length and width for object
+	rdf(LengthNode, rdf:value, literal(type(xsd:float, Length))),
+	rdf(LengthNode, gu:units, LengthUnits),
+	rdf(WidthNode, rdf:value, literal(type(xsd:float, Width))),
+	rdf(WidthNode, gu:units, WidthUnits),
+	rdf(DepthNode, rdf:value, literal(type(xsd:float, Depth))),
+	rdf(DepthNode, gu:units, DepthUnits),
+	!,
+	%% Make sure we have numbers
+	( number(Length) -> LengthN = Length ; atom_number(Length, LengthN) ),
+	( number(Width) -> WidthN = Width ; atom_number(Width, WidthN) ),
+	( number(Depth) -> DepthN = Depth ; atom_number(Depth, DepthN) ),
+	convert(LengthN, LengthUnits, LengthC, WidthUnits),
+	convert(DepthN, DepthUnits, DepthC, WidthUnits),
+	Area is 2 * LengthC * WidthN + 2 * DepthC * WidthN + 2 * DepthC + LengthC,
+	area_units_for_length(WidthUnits, AreaUnits),
+	store_statement(Subject, Predicate, literal(type(AreaUnits, Area)), gu:'Geometry', ObjectNode).
+
+s_fetch(Subject, Predicate, ObjectNode, user) :-
+	\+rdfs_individual_of(Subject, ocyc:'Mx4rwQBfkZwpEbGdrcN5Y29ycA'), % RoundObject
+	rdfs_subproperty_of(Predicate, ocyc:'Mx4rvVjbrZwpEbGdrcN5Y29ycA'), % volumeOfObject
+	rdfs_individual_of(Subject, ocyc:'Mx4r1jUXeq00EdmAAAACs0uFOQ'), % ThreeDimensionalThing
+	!,
+	fetch(Subject, ocyc:'Mx4rvVjbZpwpEbGdrcN5Y29ycA', LengthNode, _), % lengthOfObject
+	fetch(Subject, ocyc:'Mx4rvVjgA5wpEbGdrcN5Y29ycA', WidthNode, _), % widthOfObject
+	fetch(Subject, ocyc:'Mx4rvViZ85wpEbGdrcN5Y29ycA', DepthNode, _), % depthOfObject
+	%% Extract length and width for object
+	rdf(LengthNode, rdf:value, literal(type(xsd:float, Length))),
+	rdf(LengthNode, gu:units, LengthUnits),
+	rdf(WidthNode, rdf:value, literal(type(xsd:float, Width))),
+	rdf(WidthNode, gu:units, WidthUnits),
+	rdf(DepthNode, rdf:value, literal(type(xsd:float, Depth))),
+	rdf(DepthNode, gu:units, DepthUnits),
+	!,
+	%% Make sure we have numbers
+	( number(Length) -> LengthN = Length ; atom_number(Length, LengthN) ),
+	( number(Width) -> WidthN = Width ; atom_number(Width, WidthN) ),
+	( number(Depth) -> DepthN = Depth ; atom_number(Depth, DepthN) ),
+	convert(LengthN, LengthUnits, LengthC, WidthUnits),
+	convert(DepthN, DepthUnits, DepthC, WidthUnits),
+	Volume is LengthC * WidthN * DepthC,
+	volume_units_for_length(WidthUnits, VolumeUnits),
+	store_statement(Subject, Predicate, literal(type(VolumeUnits, Volume)), gu:'Geometry', ObjectNode).
+
 % Plans for calculating stuff
 volume(sphere, radius(Length), Volume) :-
     length_unit(Length),

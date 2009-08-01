@@ -153,8 +153,7 @@ fetch(Class, Predicate, ObjectNode, user) :-
     )),
     store_statement(EpsilonNode, Predicate, literal(type(TypeURI, Average)), gu:'System', ObjectNode).
 
-%%%%%%%%%%%%%% User Interaction Plans %%%%%%%%%%%%%%
-% Ask the user for an epsilon value for a class, but not a Synset
+% Create new Epsilon node and feed back
 fetch(Class, Predicate, ObjectNode, user) :-
     \+epsilon_exists(Class),
     \+rdfs_individual_of(Class, wns:'Synset'),
@@ -171,6 +170,13 @@ fetch(Class, Predicate, ObjectNode, user) :-
     rdf(EpObjectNode, gu:units, Type), !, 
     store_statement(EpsilonNode, Predicate, literal(type(Type, N)), gu:'CurrentUser', ObjectNode).
 
+% Epsilon node exists, but don't have a value for it for this predicate
+fetch(Class, Predicate, ObjectNode, user) :-
+	epsilon_exists(Class, EpsilonNode),
+	\+rdf(EpsilonNode, Predicate, _),
+	fetch(EpsilonNode, Predicate, ObjectNode, _).
+    
+%%%%%%%%%%%%%% User Interaction Plans %%%%%%%%%%%%%%
 % Ask the user for a value for an object
 fetch(Subject, Predicate, ObjectNode, user) :-
     \+rdf(Subject, Predicate, _, user),
@@ -185,9 +191,12 @@ Goal succeeds if Class refers to an RDFS class that already
 has an epsilon node in the custom ontology.
 */
 epsilon_exists(Class) :-
-    rdfs_individual_of(Class, rdfs:'Class'),
-    rdfs_individual_of(T, Class),
-    rdfs_individual_of(T, gu:'Epsilon').
+    epsilon_exists(Class, _).
+
+epsilon_exists(Class, EpsilonNode) :-
+	rdfs_individual_of(Class, rdfs:'Class'),
+    rdfs_individual_of(EpsilonNode, Class),
+    rdfs_individual_of(EpsilonNode, gu:'Epsilon'), !.
 
 ask_user(Class, Property, type(Type, Value)) :-
     (cyclify(Class, EnglishClass) -> true ; EnglishClass = Class ),
