@@ -126,9 +126,10 @@ fetch(Subject, Predicate, ObjectNode, user) :-
 	\+rdf(Subject, Predicate, _Object, user),
 	\+rdfs_individual_of(Subject, rdfs:'Class'),
 	rdfs_individual_of(Subject, ocyc:'Mx4rvVjpUZwpEbGdrcN5Y29ycA'), % Spatial thing
-	( rdfs_individual_of(Predicate, ocyc:'Mx4rvVjuYJwpEbGdrcN5Y29ycA'), !
-	 ; rdfs_individual_of(Predicate, ocyc:'Mx4rvVi5xJwpEbGdrcN5Y29ycA')
-	), % Measure 
+	( rdfs_individual_of(Predicate, ocyc:'Mx4rvVjuYJwpEbGdrcN5Y29ycA')
+	 ; \+rdfs_individual_of(Predicate, ocyc:'Mx4rvVjuYJwpEbGdrcN5Y29ycA'),
+	     rdfs_individual_of(Predicate, ocyc:'Mx4rvVi5xJwpEbGdrcN5Y29ycA')
+	),  % Measure 
 	s_fetch(Subject, Predicate, ObjectNode, user).
 
 %% Special plan for population

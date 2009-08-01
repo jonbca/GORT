@@ -11,6 +11,7 @@
 :- ensure_loaded('../declarations').
 :- rdf_meta s_fetch(r, r, r, -).
 
+%%%%% Plans for round things %%%%%%
 s_fetch(Subject, Predicate, ObjectNode, user) :-
 	rdfs_individual_of(Subject, ocyc:'Mx4rwQBfkZwpEbGdrcN5Y29ycA'), % RoundObject
 	rdfs_individual_of(Subject, ocyc:'Mx4r1jUXeq00EdmAAAACs0uFOQ'), % ThreeDimensionalThing
@@ -43,7 +44,7 @@ s_fetch(Subject, Predicate, ObjectNode, user) :-
 s_fetch(Subject, Predicate, ObjectNode, user) :-
 	rdfs_individual_of(Subject, ocyc:'Mx4rwQBfkZwpEbGdrcN5Y29ycA'), % RoundObject
 	rdfs_individual_of(Subject, ocyc:'Mx4r1jUXeq00EdmAAAACs0uFOQ'), % ThreeDimensionalThing
-	rdfs_subproperty_of(Predicate, ocyc:'Mx4rvVifGJwpEbGdrcN5Y29ycA'), % areaOfObject
+	rdfs_subproperty_of(Predicate, ocyc:'Mx4rvveoTpwpEbGdrcN5Y29ycA'), % surfaceAreaOfWholeObject
 	!,
 	fetch(Subject, ocyc:'Mx4rvVjaGJwpEbGdrcN5Y29ycA', ObjectNodeD, _), % get diameter
 	rdf(ObjectNodeD, rdf:value, literal(type(xsd:float, Value))),
@@ -54,11 +55,11 @@ s_fetch(Subject, Predicate, ObjectNode, user) :-
 	area_units_for_length(Units, AreaUnits),
 	store_statement(Subject, Predicate, literal(type(AreaUnits, AreaN)), gu:'Geometry', ObjectNode).
 
-% Area from diameter for circle
+% Area from diameter for "top" of sphere (i.e. sphere projection onto 2d surface)
 s_fetch(Subject, Predicate, ObjectNode, user) :-
 	rdfs_individual_of(Subject, ocyc:'Mx4rwQBfkZwpEbGdrcN5Y29ycA'), % RoundObject
-	rdfs_individual_of(Subject, ocyc:'Mx4rC1k_6q00EdmAAAACs0uFOQ'), % TwoDimensionalThing
-	rdfs_subproperty_of(Predicate, ocyc:'Mx4rvVifGJwpEbGdrcN5Y29ycA'), % areaOfObject
+	rdfs_individual_of(Subject, ocyc:'Mx4r1jUXeq00EdmAAAACs0uFOQ'), % ThreeDimensionalThing
+	rdfs_subproperty_of(Predicate, ocyc:'Mx4rwQVz15wpEbGdrcN5Y29ycA'), % surfaceAreaOfTopOfObject
 	!,
 	fetch(Subject, ocyc:'Mx4rvVjaGJwpEbGdrcN5Y29ycA', ObjectNodeD, _), % get diameter
 	rdf(ObjectNodeD, rdf:value, literal(type(xsd:float, Value))),
@@ -82,7 +83,28 @@ s_fetch(Subject, Predicate, ObjectNode, user) :-
 	Diameter is 2 * N,
 	store_statement(Subject, Predicate, literal(type(Units, Diameter)), gu:'Geometry', ObjectNode).
 
-
+%%%%% Plans for ... not? round things ... %%%%%
+s_fetch(Subject, Predicate, ObjectNode, user) :-
+	\+rdfs_individual_of(Subject, ocyc:'Mx4rwQBfkZwpEbGdrcN5Y29ycA'), % RoundObject
+	rdfs_subproperty_of(Predicate, ocyc:'Mx4rwQVz15wpEbGdrcN5Y29ycA'), % surfaceAreaOfTopOfObject
+	rdfs_individual_of(Subject, ocyc:'Mx4r1jUXeq00EdmAAAACs0uFOQ'), % ThreeDimensionalThing
+	!,
+	fetch(Subject, ocyc:'Mx4rvVjbZpwpEbGdrcN5Y29ycA', LengthNode, _), % lengthOfObject
+	fetch(Subject, ocyc:'Mx4rvVjgA5wpEbGdrcN5Y29ycA', WidthNode, _), % widthOfObject
+	%% Extract length and width for object
+	rdf(LengthNode, rdf:value, literal(type(xsd:float, Length))),
+	rdf(LengthNode, gu:units, LengthUnits),
+	rdf(WidthNode, rdf:value, literal(type(xsd:float, Width))),
+	rdf(WidthNode, gu:units, WidthUnits),
+	!,
+	%% Make sure we have numbers
+	( number(Length) -> LengthN = Length ; atom_number(Length, LengthN) ),
+	( number(Width) -> WidthN = Width ; atom_number(Width, WidthN) ),
+	convert(LengthN, LengthUnits, LengthC, WidthUnits),
+	Area is LengthC * WidthN,
+	area_units_for_length(WidthUnits, AreaUnits),
+	store_statement(Subject, Predicate, literal(type(AreaUnits, Area)), gu:'Geometry', ObjectNode).
+	
 % Plans for calculating stuff
 volume(sphere, radius(Length), Volume) :-
     length_unit(Length),
