@@ -62,14 +62,20 @@ gu:ratio            rdf:subClassOf						ocyc:Mx4rHV4bNAapQdmIKu4eYnDH2A ;
 gu:GuesstimationTechnique rdf:subClassOf                owl:Thing ;
 					rdfs:label							"GuesstimationTechnique".
 					
-gu:Aggregation		rdf:type							gu:GuesstimationTechnique;
-					rdfs:label							"Aggregation"@en.
+gu:Geography		rdf:type							gu:GuesstimationTechnique;
+					rdfs:label							"Geography"@en.
 
 gu:Function			rdf:type							gu:GuesstimationTechnique;
 					rdfs:label							"Function"@en.
 
 gu:Geometry			rdf:type							gu:GuesstimationTechnique;
 					rdfs:label							"Geometry"@en.
+					
+gu:ArbitraryObject  rdf:type							gu:GuesstimationTechnique;
+					rdfs:label							"ArbitraryObject"@en.
+
+gu:Averaging		rdf:type							gu:GuesstimationTechnique;
+					rdfs:label							"Averaging"@en.
 
 # Distance mappings, including scales relative to metres
 ocyc:Mx4rvVjRp5wpEbGdrcN5Y29ycA		gu:prologSymbol	"m" ;
