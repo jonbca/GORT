@@ -28,6 +28,7 @@
 :- rdf_register_ns(dc, 'http://purl.org/dc/elements/1.1/').
 :- rdf_register_ns(geo, 'http://www.w3.org/2003/01/geo/wgs84_pos#').
 :- rdf_register_ns(fb, 'http://www4.wiwiss.fu-berlin.de/factbook/ns#').
+:- rdf_register_ns(dbpedia, 'http://dbpedia.org/resource/').
 
 :- write('Loading guesstimation program'), nl.
 
