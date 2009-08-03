@@ -99,17 +99,21 @@ fetch(Synset, Predicate, ObjectNode, user) :-
 	rdfs_individual_of(Synset, wns:'Synset'),
 	rdf(Synset, Predicate, ObjectNode, user), !.
 
-% Fix the junk in DBPedia
+% Fix the junk in DBPedia. Some DBPedia number triples are stored as
+% text, like "6,371.0 km"@en, which the system needs as a typed literal of "6371.0"^^dbo:kilometre
+% This goal tries to parse the text representation and replace it with a typed interpretation.
 fetch(Subject, Predicate, _, _) :-
-	rdf_global_id(dbp:_, Predicate),
-	\+rdf(Subject, Predicate, literal(type(_, _))),
 	rdf_transaction((
-		\+rdf(Subject, Predicate, _Object, user),
-		rdf(Subject, Predicate, literal(lang(en, V))),
-		fix_dbpunits(Subject, Predicate, Literal),
-		rdf_update(Subject, Predicate, literal(lang(en, V)), object(Literal))
+		\+rdf(Subject, Predicate, literal(type(_, _))),
+		rdfs_subproperty_of(DbProp, Predicate),
+		rdf_global_id(dbp:_, DbProp),
+		\+rdf(Subject, DbProp, _Object, user),
+		solve(Subject, DbProp, [literal(lang(en, V)), DBPSubject | _]),
+		fix_dbpunits(DBPSubject, DbProp, Literal),
+		rdf_update(DBPSubject, DbProp, literal(lang(en, V)), object(Literal))
 	)),
-	fail.  % Force backtracking. This looks really weird, but it's necessary.
+	fail.  % Force backtracking. This looks really weird, but it's necessary
+	       % for the rest of the fetch plans to execute.
 
 %%%%%%%%%%%%%% General purpose plans %%%%%%%%%%%%%%%
 % Fetch epsilon value for a Class
@@ -183,16 +187,15 @@ fetch(Class, Predicate, ObjectNode, user) :-
     \+rdfs_individual_of(Class, wns:'Synset'),
     rdfs_individual_of(Class, rdfs:'Class'),
     \+get_average_value(Class, Predicate, _),
-    % ask_user(Class, Predicate, type(Type, N)),
     rdf_transaction((
     	rdf_node(EpsilonNode),
     	rdf_assert(EpsilonNode, rdf:type, Class),
     	rdf_assert(EpsilonNode, rdf:type, gu:'Epsilon')
     )),
-    fetch(EpsilonNode, Predicate, EpObjectNode, _),
-    rdf(EpObjectNode, rdf:value, literal(type(xsd:float, N))),
-    rdf(EpObjectNode, gu:units, Type), !, 
-    store_statement(EpsilonNode, Predicate, literal(type(Type, N)), gu:'CurrentUser', ObjectNode).
+    fetch(EpsilonNode, Predicate, ObjectNode, _).%,
+    %rdf(EpObjectNode, rdf:value, literal(type(xsd:float, N))),
+    %rdf(EpObjectNode, gu:units, Type), !, 
+    %store_statement(EpsilonNode, Predicate, literal(type(Type, N)), gu:'CurrentUser', ObjectNode).
 
 % Epsilon node exists, but don't have a value for it for this predicate
 fetch(Class, Predicate, ObjectNode, user) :-
@@ -236,6 +239,9 @@ ask_user(Class, Property, type(Type, Value)) :-
     (cyclify(Class, EnglishClass) -> true ; EnglishClass = Class ),
     (cyclify(Property, EnglishProperty) -> true ; EnglishProperty = Property),
     prompt(_, 'ask> '),
+    write('Need information about '), write(EnglishClass), write('.'), nl,
+    (rdf(Class, rdfs:comment, literal(lang(en,Comment))) ->
+    	writeln(Comment), nl ; true),
     write('enter value for: '),
     writeln(rdf(EnglishClass, EnglishProperty, '?')),
     read_input_line(Tokens),

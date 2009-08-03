@@ -13,11 +13,23 @@
 
 % Must be same dimension!
 quantity_of(SmallerClass, SmallerPredicate, BiggerClass,
-		BiggerPredicate, literal(type(xsd:float, Guess))) :-
+		BiggerPredicate, literal(type(gu:oom, Guess))) :-
     fetch(SmallerClass, SmallerPredicate, ObjectNode, _),
     fetch(ObjectNode, rdf:value, literal(type(xsd:float, SmallerValue)), user),
     fetch(ObjectNode, gu:units, SmallerType, user),
     fetch(BiggerClass, BiggerPredicate, BiggerObjectNode, _),
+    fetch(BiggerObjectNode, rdf:value, literal(type(xsd:float, BiggerValue)), _),
+    fetch(BiggerObjectNode, gu:units, BiggerType, user),
+    convert(SmallerValue, SmallerType, SmallerValueConverted, BiggerType),
+    to_om(SmallerValueConverted, SmallerValueConvertedOM),
+    to_om(BiggerValue, BiggerValueOM),
+    div(BiggerValueOM, SmallerValueConvertedOM, Guess).
+    
+quantity_of(SmallerClass, BiggerClass, Predicate, literal(type(gu:oom, Guess))) :-
+	fetch(SmallerClass, Predicate, ObjectNode, _),
+	fetch(ObjectNode, rdf:value, literal(type(xsd:float, SmallerValue)), user),
+    fetch(ObjectNode, gu:units, SmallerType, user),
+    fetch(BiggerClass, Predicate, BiggerObjectNode, _),
     fetch(BiggerObjectNode, rdf:value, literal(type(xsd:float, BiggerValue)), _),
     fetch(BiggerObjectNode, gu:units, BiggerType, user),
     convert(SmallerValue, SmallerType, SmallerValueConverted, BiggerType),

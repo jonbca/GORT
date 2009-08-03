@@ -47,9 +47,11 @@
 :-rdf_db:rdf_load('../guessdata/dbpedia_extracts/infobox-height.ttl').
 :-rdf_db:rdf_load('../guessdata/dbpedia_extracts/infobox-weight.ttl').
 :-rdf_db:rdf_load('../guessdata/dbpedia_extracts/infobox-width.ttl').
+:-rdf_db:rdf_load('../guessdata/dbpedia_extracts/earth.ttl').
 
 :- write('Fixing OpenCyc - Wordnet Mappings'),nl.
 :- fix_ocyc_synsets.
+:- map_operators.
 
 :- rdf_set_predicate(owl:sameAs, transitive(true)).
 :- rdf_set_predicate(owl:sameAs, symmetric(true)).

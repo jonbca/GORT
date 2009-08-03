@@ -45,7 +45,7 @@ reification(rdf(Subject, Predicate, Object), PredicateR, ObjectR, StatementId) :
     rdf(StatementId, rdf:subject, Subject, user),
 	rdf(StatementId, rdf:predicate, Predicate, user),
 	rdf(StatementId, rdf:object, Object, user),
-	rdf(StatementId, PredicateR, ObjectR, user), !.
+	rdf(StatementId, PredicateR, ObjectR, user).
 	
 print_value_node(NodeURI) :-
 	write(' has value '),
@@ -55,31 +55,31 @@ print_value_node(NodeURI) :-
 	write(' or '),
 	write(OOMValue),
 	rdf(NodeURI, gu:units, Units),
-	symbol_uri(Symbol, Units),
-	write(' '), write(Symbol), nl, !.
+	once(symbol_uri(Symbol, Units)),
+	write(' '), write(Symbol), nl.
 
+/** dump_customised_ontology is multi.
+Print out all statements in the customised ontology in a user-friendly way.
+
+*/
 dump_customised_ontology :-
 	findall(Subj, get_statements(Subj), Subjects),
 	sort(Subjects, SubjectSet),
-	print_nodes(SubjectSet).
-	
+	print_nodes(SubjectSet, _).
+
 get_statements(Subj) :-
 	rdf(State, rdf:type, rdf:'Statement'),
 	rdf(State, rdf:subject, Subj).
 
-print_nodes([]).
-print_nodes([Head | Tail]) :-
-	print_nodes(Tail),
-	print_node(Head).
+print_nodes([X | _], X) :-
+	print_node(X).
+print_nodes([_ | Tail], X) :-
+	print_nodes(Tail, X).
 
-print_node(Subj) :-
-	\+rdf(Subj, rdf:type, gu:'Epsilon', user),
-	once(rdf(Subj, Pred, Obj, user)),
-	(cyclify(Subj, EnglishSubj) -> true ; Subj = EnglishSubj),
-	(cyclify(Pred, EnglishPred) -> true ; Pred = EnglishPred),
-	(cyclify(Obj, EnglishObj) -> true ; Obj = EnglishObj),
-	write(EnglishSubj), write(' has '), write(EnglishPred), write(' of '), write(EnglishObj), nl.
-
+/**
+print_node/1
+Print out a description of an epsilon node
+*/
 print_node(Subj) :-
 	rdf(Subj, rdf:type, gu:'Epsilon', user),
 	rdf(Subj, Pred, Obj, user),
@@ -98,11 +98,12 @@ print_node(Subj) :-
     ( once(rdf(Source, rdfs:label, literal(lang(en, Label)))) -> true ; Source = Label ),
     write(Label), nl.
     
+/** print_node/1
+Print out a description of a non-epsilon node.
+*/
 print_node(Subj) :-
-	once(rdf(Subj, Pred, Obj, user)),
-	once(rdf(Subj, rdf:type, _)),
 	\+rdf(Subj, rdf:type, gu:'Epsilon', user),
-	\+rdf(Subj, rdf:type, rdf:'Statement', user),
+	rdf(Subj, Pred, Obj, user),
 	Pred \= 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
 	(once(rdf(Subj, rdfs:label, literal(EnglishSubj))) -> true ; Subj = EnglishSubj),
 	write(EnglishSubj),
