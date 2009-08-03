@@ -11,7 +11,7 @@
 :- use_module(library('semweb/rdf_db')).
 :- ensure_loaded('epsilon').
 :- ensure_loaded('../declarations').
-:- multifile fetch/4.
+:- ensure_loaded('conversion').
 
 :- rdf_meta fetch(r, r, t, -), store_statement(r, r, t, r, r).
 
@@ -61,6 +61,19 @@ fix_units(Subject, Property, Type, Value) :-
 	read_input_line([Units]),
 	symbol_uri(Units, Type), !.
 
+fix_dbpunits(Subject, Predicate, Measure) :-
+	rdf(Subject, Predicate, literal(lang(en, Value))),
+	atom_chars(Value, Chars),
+	delete(Chars, ',', NewChars),
+	atom_chars(NewValue, NewChars),
+	catch(term_to_atom(MeasureTerm, NewValue), _, fail),
+	term_to_literal(MeasureTerm, Measure).
+
+term_to_literal(Term, literal(type(Type, Value))) :-
+	Term =.. [Symbol, ValueN],
+	atom_number(Value, ValueN),
+	symbol_uri(Symbol, Type).
+
 /** fetch(+Subject, +Predicate, -Object, -Graph) is nondet.
 
 Fetches a triple from the store, and if necessary, copies it to the 
@@ -85,6 +98,18 @@ fetch(Subject, Predicate, ObjectNode, user) :-
 fetch(Synset, Predicate, ObjectNode, user) :-
 	rdfs_individual_of(Synset, wns:'Synset'),
 	rdf(Synset, Predicate, ObjectNode, user), !.
+
+% Fix the junk in DBPedia
+fetch(Subject, Predicate, _, _) :-
+	rdf_global_id(dbp:_, Predicate),
+	\+rdf(Subject, Predicate, literal(type(_, _))),
+	rdf_transaction((
+		\+rdf(Subject, Predicate, _Object, user),
+		rdf(Subject, Predicate, literal(lang(en, V))),
+		fix_dbpunits(Subject, Predicate, Literal),
+		rdf_update(Subject, Predicate, literal(lang(en, V)), object(Literal))
+	)),
+	fail.  % Force backtracking. This looks really weird, but it's necessary.
 
 %%%%%%%%%%%%%% General purpose plans %%%%%%%%%%%%%%%
 % Fetch epsilon value for a Class

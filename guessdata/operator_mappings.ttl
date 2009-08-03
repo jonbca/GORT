@@ -33,19 +33,19 @@ gu:scaleFactor      a                                   rdfs:Property ;
 # Custom class type for "typical example" entities
 gu:Epsilon          rdfs:subClassOf                     owl:Thing ;
                     rdfs:comment                        "A typical example of a member of a class" ;
-                    rdfs:label                          "Epsilon".
+                    rdfs:label                          "Epsilon"@en.
 
 gu:System           rdf:type                            owl:Thing ;
                     rdfs:comment                        "A thing representing the Guesstimation system, used in reification.";
-                    rdfs:label                          "System".
+                    rdfs:label                          "System"@en.
                     
 gu:User             rdfs:subClassOf						foaf:Person ;
 					rdfs:comment						"A person who interacts with the Guesstimation system" ;
-					rdfs:label							"GuesstimationUser" .
+					rdfs:label							"UserEntry"@en .
 					
 gu:CurrentUser      rdf:type							gu:User ;
 					rdfs:comment						"The current user of the Guesstimation System" ;
-					rdfs:label							"Guesstimator" .
+					rdfs:label							"UserEntry"@en .
 
 gu:oom				rdf:type							ocyc:Mx4rQ-Ffxj-XQdeRMsuOebkIHQ ;
 					rdfs:comment						"Order of magnitude datatype";
@@ -62,11 +62,14 @@ gu:ratio            rdf:subClassOf						ocyc:Mx4rHV4bNAapQdmIKu4eYnDH2A ;
 gu:GuesstimationTechnique rdf:subClassOf                owl:Thing ;
 					rdfs:label							"GuesstimationTechnique".
 					
-gu:Aggregation		rdf:type							gu:GuesstimationTechnique.
+gu:Aggregation		rdf:type							gu:GuesstimationTechnique;
+					rdfs:label							"Aggregation"@en.
 
-gu:Function			rdf:type							gu:GuesstimationTechnique.
+gu:Function			rdf:type							gu:GuesstimationTechnique;
+					rdfs:label							"Function"@en.
 
-gu:Geometry			rdf:type							gu:GuesstimationTechnique.
+gu:Geometry			rdf:type							gu:GuesstimationTechnique;
+					rdfs:label							"Geometry"@en.
 
 # Distance mappings, including scales relative to metres
 ocyc:Mx4rvVjRp5wpEbGdrcN5Y29ycA		gu:prologSymbol	"m" ;

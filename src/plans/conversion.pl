@@ -9,7 +9,9 @@
 
 :- use_module(library('semweb/rdf_turtle')).
 :- use_module(library('semweb/rdf_db')).
+:- use_module(library('semweb/rdfs')).
 :- ensure_loaded('../meta/cycutils').
+:- ensure_loaded('../inference/owl').
 
 :- multifile noprove/1.
 :- dynamic noprove/1.

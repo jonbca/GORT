@@ -12,6 +12,19 @@
 :- rdf_meta s_fetch(r, r, r, -).
 
 %%%%% Plans for round things %%%%%%
+% Rewrite length/width/depth to diameter for round things
+s_fetch(Subject, Predicate, ObjectNode, user) :-
+	rdfs_subproperty_of(Predicate, ocyc:'Mx4rvVjbZpwpEbGdrcN5Y29ycA'), % lengthOfObject
+	s_fetch(Subject, ocyc:'Mx4rvVjaGJwpEbGdrcN5Y29ycA', ObjectNode, user). % rewrite to diameter
+
+s_fetch(Subject, Predicate, ObjectNode, user) :-
+	rdfs_subproperty_of(Predicate, ocyc:'Mx4rvVjgA5wpEbGdrcN5Y29ycA'), % widthOfObject
+	s_fetch(Subject, ocyc:'Mx4rvVjaGJwpEbGdrcN5Y29ycA', ObjectNode, user). % rewrite to diameter
+
+s_fetch(Subject, Predicate, ObjectNode, user) :-
+	rdfs_subproperty_of(Predicate, ocyc:'Mx4rvViZ85wpEbGdrcN5Y29ycA'), % depthOfObject
+	s_fetch(Subject, ocyc:'Mx4rvVjaGJwpEbGdrcN5Y29ycA', ObjectNode, user). % rewrite to diameter
+
 s_fetch(Subject, Predicate, ObjectNode, user) :-
 	rdfs_individual_of(Subject, ocyc:'Mx4rwQBfkZwpEbGdrcN5Y29ycA'), % RoundObject
 	rdfs_individual_of(Subject, ocyc:'Mx4r1jUXeq00EdmAAAACs0uFOQ'), % ThreeDimensionalThing
