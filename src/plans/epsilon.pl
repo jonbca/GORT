@@ -43,7 +43,7 @@ get_items(Domain, Property, type(Type, Value)) :-
     rdf_has(Item, Property, literal(ValueType)),
     ValueType = type(NativeType, NativeValue),
     (atom_number(NativeValue, NativeValueN) ; number(NativeValue), NativeValueN = NativeValue),
-    convert(NativeValueN, NativeType, Value, Type).
+    convert(NativeValueN, NativeType, Value, Type).    %%FIXME
     
 
 /**convert_list(+InputList, +TargetUnits, -OutputList) is det.
@@ -64,7 +64,7 @@ convert_list( [type(Type, Value) | Tail], TargetUnits, New ) :-
     
 do_conversion(Value, Type, NewValue, TargetUnits) :-
     number(Value),
-    convert(Value, Type, NewValue, TargetUnits).
+    convert(Value, Type, NewValue, TargetUnits).     %%FIXME
     
 do_conversion(Value, Type, NewValue, TargetUnits) :-
     catch(
@@ -72,7 +72,7 @@ do_conversion(Value, Type, NewValue, TargetUnits) :-
     	_,
     	fail
     ),
-    convert(ValueN, Type, NewValue, TargetUnits).
+    convert(ValueN, Type, NewValue, TargetUnits).    %%FIXME
 
 /** average_list(+List, -Average) is det.
 Returns the average value of all elements in a list.

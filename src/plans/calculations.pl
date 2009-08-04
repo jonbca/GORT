@@ -113,7 +113,7 @@ s_fetch(Subject, Predicate, ObjectNode, user) :-
 	%% Make sure we have numbers
 	( number(Length) -> LengthN = Length ; atom_number(Length, LengthN) ),
 	( number(Width) -> WidthN = Width ; atom_number(Width, WidthN) ),
-	convert(LengthN, LengthUnits, LengthC, WidthUnits),
+	convert(LengthN, LengthUnits, LengthC, WidthUnits),   %%% FIXME
 	Area is LengthC * WidthN,
 	area_units_for_length(WidthUnits, AreaUnits),
 	store_statement(Subject, Predicate, literal(type(AreaUnits, Area)), gu:'Geometry', ObjectNode).
@@ -138,8 +138,8 @@ s_fetch(Subject, Predicate, ObjectNode, user) :-
 	( number(Length) -> LengthN = Length ; atom_number(Length, LengthN) ),
 	( number(Width) -> WidthN = Width ; atom_number(Width, WidthN) ),
 	( number(Depth) -> DepthN = Depth ; atom_number(Depth, DepthN) ),
-	convert(LengthN, LengthUnits, LengthC, WidthUnits),
-	convert(DepthN, DepthUnits, DepthC, WidthUnits),
+	convert(LengthN, LengthUnits, LengthC, WidthUnits),   %%FIXME
+	convert(DepthN, DepthUnits, DepthC, WidthUnits),      %%FIXME
 	Area is 2 * LengthC * WidthN + 2 * DepthC * WidthN + 2 * DepthC + LengthC,
 	area_units_for_length(WidthUnits, AreaUnits),
 	store_statement(Subject, Predicate, literal(type(AreaUnits, Area)), gu:'Geometry', ObjectNode).
@@ -164,72 +164,11 @@ s_fetch(Subject, Predicate, ObjectNode, user) :-
 	( number(Length) -> LengthN = Length ; atom_number(Length, LengthN) ),
 	( number(Width) -> WidthN = Width ; atom_number(Width, WidthN) ),
 	( number(Depth) -> DepthN = Depth ; atom_number(Depth, DepthN) ),
-	convert(LengthN, LengthUnits, LengthC, WidthUnits),
-	convert(DepthN, DepthUnits, DepthC, WidthUnits),
+	convert(LengthN, LengthUnits, LengthC, WidthUnits),  %%FIXME
+	convert(DepthN, DepthUnits, DepthC, WidthUnits),     %%FIXME
 	Volume is LengthC * WidthN * DepthC,
 	volume_units_for_length(WidthUnits, VolumeUnits),
 	store_statement(Subject, Predicate, literal(type(VolumeUnits, Volume)), gu:'Geometry', ObjectNode).
-
-% Plans for calculating stuff
-volume(sphere, radius(Length), Volume) :-
-    length_unit(Length),
-    Length =.. [Symbol, N],
-    VolumeN is (4 / 3) * pi * (N ** 3),
-    Volume =.. [Symbol, VolumeN].
-
-volume(sphere, diameter(Length), Volume) :-
-    length_unit(Length),
-    Length =.. [Symbol, N],
-    VolumeN is (4/3) * pi * ((N/2) ** 3),
-    Volume =.. [Symbol, VolumeN].
-
-perimeter(circle, radius(Length), Perimeter) :-
-    length_unit(Length),
-    Length =.. [Symbol, N],
-    PerimeterN is pi * 2 * N,
-    Perimeter =.. [Symbol, PerimeterN].
-
-perimeter(circle, diameter(Length), Perimeter) :-
-    length_unit(Length),
-    Length =.. [Symbol, N],
-    PerimeterN is pi * N,
-    Perimeter =.. [Symbol, PerimeterN].
-
-area(circle, radius(Length), Area) :-
-    length_unit(Length),
-    Length =.. [Symbol, N],
-    AreaN is pi * N ** 2,
-    area_units_for_length(Symbol, AreaUnit),
-    Area =.. [AreaUnit, AreaN].
-
-area(circle, diameter(Length), Area) :-
-    length_unit(Length),
-    Length =.. [Symbol, N],
-    AreaN is pi * (N / 2) ** 2,
-    area_units_for_length(Symbol, AreaUnit),
-    Area =.. [AreaUnit, AreaN].
-
-area(sphere, diameter(Length), Area) :-
-	length_unit(Length),
-	Length =.. [Symbol, N],
-	AreaN is pi * N ** 2,
-	area_units_for_length(Symbol, AreaUnit),
-	Area =.. [AreaUnit, AreaN].
-
-area(square, Length, Area) :-
-    length_unit(Length),
-    Length =.. [Symbol, N],
-    AreaN is N * N,
-    area_units_for_length(Symbol, AreaUnit),
-    Area =.. [AreaUnit, AreaN].
-    
-area(rectangle, Length, Width, Area) :-
-    Width =.. [SymbolWidth, W],
-    ConvertedLength =.. [SymbolWidth, L],
-    convert(Length, ConvertedLength),
-    AreaN is L * W,
-    area_units_for_length(SymbolWidth, AreaUnit),
-    Area =.. [AreaUnit, AreaN].
     
     
 % Find area/volume units for a given length unit.

@@ -20,7 +20,7 @@ quantity_of(SmallerClass, SmallerPredicate, BiggerClass,
     fetch(BiggerClass, BiggerPredicate, BiggerObjectNode, _),
     fetch(BiggerObjectNode, rdf:value, literal(type(xsd:float, BiggerValue)), _),
     fetch(BiggerObjectNode, gu:units, BiggerType, user),
-    convert(SmallerValue, SmallerType, SmallerValueConverted, BiggerType),
+    convert(SmallerValue, SmallerType, SmallerValueConverted, BiggerType),    %%FIXME
     to_om(SmallerValueConverted, SmallerValueConvertedOM),
     to_om(BiggerValue, BiggerValueOM),
     div(BiggerValueOM, SmallerValueConvertedOM, Guess).
@@ -32,7 +32,7 @@ quantity_of(SmallerClass, BiggerClass, Predicate, literal(type(gu:oom, Guess))) 
     fetch(BiggerClass, Predicate, BiggerObjectNode, _),
     fetch(BiggerObjectNode, rdf:value, literal(type(xsd:float, BiggerValue)), _),
     fetch(BiggerObjectNode, gu:units, BiggerType, user),
-    convert(SmallerValue, SmallerType, SmallerValueConverted, BiggerType),
+    convert(SmallerValue, SmallerType, SmallerValueConverted, BiggerType),    %%FIXME
     to_om(SmallerValueConverted, SmallerValueConvertedOM),
     to_om(BiggerValue, BiggerValueOM),
     div(BiggerValueOM, SmallerValueConvertedOM, Guess).

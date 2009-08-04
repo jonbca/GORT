@@ -142,11 +142,9 @@ scale_factor(UnitURI, Factor) :-
 	Factor is NumeratorFactor/DenominatorFactor.
 
 scale_factor(UnitURI, 1.0) :-
-	\+rdf(UnitURI, gu:scaleFactor, _),
 	\+rdfs_individual_of(UnitURI, ocyc:'Mx4ruFr2Fp-7QdiS0NRO_LP5CA'),
 	\+rdfs_individual_of(UnitURI, ocyc:'Mx4rVG-MSJ_AQdiKntlmhkDKfQ'),
-	\+rdfs_individual_of(UnitURI, gu:ratioUnits),
-	\+rdfs_individual_of(UnitURI, gu:productUnits).
+	\+rdfs_individual_of(UnitURI, gu:compoundUnits).
 
 get_all_scale_factors([], []).
 get_all_scale_factors([UnitURI | Tail], [Factor | FactorTail]) :-
