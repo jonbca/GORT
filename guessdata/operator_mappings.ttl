@@ -3,8 +3,6 @@
 # This file contains relations for operators, and the guesstimation
 # ontology.
 #
-
-
 @prefix owl: <http://www.w3.org/2002/07/owl#>.
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
@@ -55,11 +53,17 @@ gu:units			rdf:type							rdfs:Property;
 					rdfs:comment						"Measurements units for a value";
 					rdfs:label							"ScaleUnits".
 
+gu:compoundUnits	rdfs:subClassOf						ocyc:Mx4rVG-MSJ_AQdiKntlmhkDKfQ ;
+					rdfs:comment						"Measurement unit with more than one fundamental unit."@en;
+					rdfs:label							"CompoundUnits".
+
 gu:ratioUnits       rdfs:subClassOf						ocyc:Mx4rQ-50UqOYQdiQDvgE1ypyhw ;
+					rdfs:subClassOf						gu:compoundUnits ;
 					rdfs:label							"Ratio" ;
 					rdfs:comment						"Ratio between two measurements".
 
 gu:productUnits		rdfs:subClassOf						ocyc:Mx4rVG-MSJ_AQdiKntlmhkDKfQ ;
+					rdfs:subClassOf						gu:compoundUnits ;
 					rdfs:label							"Product" ;
 					rdfs:comment						"Product between two measurements".				
 
