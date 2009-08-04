@@ -8,6 +8,7 @@
 %% Reification for RDF statements
 
 :- use_module(library('semweb/rdf_db')).
+:- ensure_loaded('../declarations.pl').
 :- rdf_meta reify_create(t, r, o, -), reification(t, r, o, ?).
 
 /** Creates a reification for an RDF node. The RDF node must exist, but this

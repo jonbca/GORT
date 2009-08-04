@@ -55,9 +55,23 @@ gu:units			rdf:type							rdfs:Property;
 					rdfs:comment						"Measurements units for a value";
 					rdfs:label							"ScaleUnits".
 
-gu:ratio            rdf:subClassOf						ocyc:Mx4rHV4bNAapQdmIKu4eYnDH2A ;
+gu:ratioUnits       rdfs:subClassOf						ocyc:Mx4rQ-50UqOYQdiQDvgE1ypyhw ;
 					rdfs:label							"Ratio" ;
 					rdfs:comment						"Ratio between two measurements".
+
+gu:productUnits		rdfs:subClassOf						ocyc:Mx4rVG-MSJ_AQdiKntlmhkDKfQ ;
+					rdfs:label							"Product" ;
+					rdfs:comment						"Product between two measurements".				
+
+gu:numeratorUnits	rdfs:subPropertyOf					gu:units;
+					rdfs:label							"Numerator"@en ;
+					rdfs:domain							gu:ratio;
+					rdfs:range							rdfs:Literal.
+
+gu:denominatorUnits rdfs:subPropertyOf					gu:units;
+					rdfs:label							"Denominator"@en ;
+					rdfs:domain							gu:ratio;
+					rdfs:range							rdfs:Literal.
 
 gu:GuesstimationTechnique rdf:subClassOf                owl:Thing ;
 					rdfs:label							"GuesstimationTechnique".

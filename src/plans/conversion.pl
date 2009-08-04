@@ -106,8 +106,11 @@ split_input(Measure, Number, Symbol) :-
 %  @param Unit The unit operator for a particular measurement concept (e.g. 'km')
 %  @param UnitURI The URI that represents the measurement concept in the RDF store
 symbol_uri(Unit, UnitURI) :-
-    rdf(UnitURI, gu:prologSymbol, literal(Unit)).
-    
+    rdf(UnitURI, gu:prologSymbol, literal(Unit)), !.
+
+symbol_uri(Symbol, UnitURI) :-
+	cyclify(UnitURI, Symbol), !.
+
 symbol_uri(UnitURI, CycURI) :-
     solve(UnitURI, gu:prologSymbol, [literal(_), CycURI |_]).
 
@@ -118,10 +121,37 @@ symbol_uri(UnitURI, CycURI) :-
 %
 %  @param UnitURI The URI for the unit to find the conversion factor for
 %  @param Factor  A floating-point number that relates the given unit to some base unit.
+
 scale_factor(UnitURI, Factor) :-
     rdf(UnitURI, gu:scaleFactor, literal(type(_,FactorA))),
     !,								% Only care about 1 result, so cut
     atom_number(FactorA, Factor).
+
+scale_factor(UnitURI, Factor) :-
+	rdfs_individual_of(UnitURI, gu:productUnits),
+	findall(UnitPart, rdf(UnitURI, gu:units, UnitPart), UnitParts),
+	get_all_scale_factors(UnitParts, Factors),
+	product_list(Factors, Factor).
+	
+scale_factor(UnitURI, Factor) :-
+	rdfs_individual_of(UnitURI, gu:ratioUnits),
+	rdf(UnitURI, gu:numeratorUnits, UnitsNumerator),
+	rdf(UnitURI, gu:denominatorUnits, UnitsDenominator),
+	scale_factor(UnitsNumerator, NumeratorFactor),
+	scale_factor(UnitsDenominator, DenominatorFactor),
+	Factor is NumeratorFactor/DenominatorFactor.
+
+scale_factor(UnitURI, 1.0) :-
+	\+rdf(UnitURI, gu:scaleFactor, _),
+	\+rdfs_individual_of(UnitURI, ocyc:'Mx4ruFr2Fp-7QdiS0NRO_LP5CA'),
+	\+rdfs_individual_of(UnitURI, ocyc:'Mx4rVG-MSJ_AQdiKntlmhkDKfQ'),
+	\+rdfs_individual_of(UnitURI, gu:ratioUnits),
+	\+rdfs_individual_of(UnitURI, gu:productUnits).
+
+get_all_scale_factors([], []).
+get_all_scale_factors([UnitURI | Tail], [Factor | FactorTail]) :-
+	scale_factor(UnitURI, Factor),
+	get_all_scale_factors(Tail, FactorTail).
 
 %% same_dimension( +UnitAURI, +UnitBURI ) is semidet.
 %

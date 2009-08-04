@@ -20,6 +20,7 @@ product_list(List, Result) :-
 product_list([], X, X).
 
 product_list([H | Tail], PartialProduct, Product) :-
+    atom(H),
     atom_number(H, N), !, 
     PartialProduct1 is PartialProduct * N,
     product_list(Tail, PartialProduct1, Product).
