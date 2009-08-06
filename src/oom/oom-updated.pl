@@ -18,7 +18,7 @@ to_om(0, om(0, 0)) :- !.
 %%%% e.g. 25000 --> 2.5e5 --> 3e5 --> om(3, 5).
 to_om(Value, OOM) :-
     atom(Value), !,
-    atom_number(Value, ValueN),
+    catch(atom_number(Value, ValueN), _, fail),
     to_om(ValueN, OOM).
 
 to_om(ValueN, om(Mantissa, Exponent)) :-

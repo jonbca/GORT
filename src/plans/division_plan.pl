@@ -36,3 +36,14 @@ quantity_of(SmallerClass, BiggerClass, Predicate, literal(type(gu:oom, Guess))) 
     to_om(SmallerValueConverted, SmallerValueConvertedOM),
     to_om(BiggerValue, BiggerValueOM),
     div(BiggerValueOM, SmallerValueConvertedOM, Guess).
+    
+quantity_of_div(TopClass, TopPredicate, BottomClass, BottomPredicate, Out) :-
+	fetch(TopClass, TopPredicate, TopResult),
+	fetch(BottomClass, BottomPredicate, BottomResult),
+	rdf(TopResult, gu:units, TopUnits),
+	rdf(BottomResult, gu:units, BottomUnits),
+	rdf(TopResult, rdf:value, literal(type(xsd:float, TopResultN))),
+	rdf(BottomResult, rdf:value, literal(type(xsd:float, BottomResultN))),
+	divide(units(literal(type(xsd:float, TopResultN)), TopUnits),
+		units(literal(type(xsd:float, BottomResultN)), BottomUnits),
+		Out).

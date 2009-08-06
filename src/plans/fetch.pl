@@ -23,6 +23,7 @@ Records a statement in the customised ontology, and adds its reification.
 */
 store_statement(Subject, Predicate, literal(type(Type, Value)), Graph, ObjectNode) :-
 	\+var(Type),
+	\+rdf(Subject, Predicate, _),
     rdf_transaction((
 	    rdf_node(ObjectNode),
 	    rdf_assert(Subject, Predicate, ObjectNode),
@@ -36,8 +37,38 @@ store_statement(Subject, Predicate, literal(type(Type, Value)), Graph, ObjectNod
 % Records a statement if the units are not known. Asks the user to specify the units.
 store_statement(Subject, Predicate, literal(type(Type, Value)), Graph, ObjectNode) :-
 	var(Type),
+	\+rdf(Subject, Predicate, _),
 	fix_units(Subject, Predicate, Type, Value),
     rdf_transaction((
+	    rdf_node(ObjectNode),
+	    rdf_assert(Subject, Predicate, ObjectNode),
+	    rdf_assert(ObjectNode, rdf:value, literal(type(xsd:float, Value))),
+	    to_om(Value, ValueOM),
+	    rdf_assert(ObjectNode, rdf:value, literal(type(gu:oom, ValueOM))),
+	    rdf_assert(ObjectNode, gu:units, Type),
+	    reify_create(rdf(Subject, Predicate, ObjectNode), dc:source, Graph, _)
+    )).
+
+store_statement(Subject, Predicate, literal(type(Type, Value)), Graph, ObjectNode) :-
+	\+var(Type),
+	once(rdf(Subject, Predicate, _)),
+    rdf_transaction((
+    	rdf_retractall(Subject, Predicate, _),
+	    rdf_node(ObjectNode),
+	    rdf_assert(Subject, Predicate, ObjectNode),
+	    rdf_assert(ObjectNode, rdf:value, literal(type(xsd:float, Value))),
+	    to_om(Value, ValueOM),
+	    rdf_assert(ObjectNode, rdf:value, literal(type(gu:oom, ValueOM))),
+	    rdf_assert(ObjectNode, gu:units, Type),
+	    reify_create(rdf(Subject, Predicate, ObjectNode), dc:source, Graph, _)
+    )).
+
+store_statement(Subject, Predicate, literal(type(Type, Value)), Graph, ObjectNode) :-
+	var(Type),
+	once(rdf(Subject, Predicate, _)),
+	fix_units(Subject, Predicate, Type, Value),
+    rdf_transaction((
+    	rdf_retractall(Subject, Predicate, _),
 	    rdf_node(ObjectNode),
 	    rdf_assert(Subject, Predicate, ObjectNode),
 	    rdf_assert(ObjectNode, rdf:value, literal(type(xsd:float, Value))),
@@ -69,6 +100,13 @@ fix_dbpunits(Subject, Predicate, Measure) :-
 	catch(term_to_atom(MeasureTerm, NewValue), _, fail),
 	term_to_literal(MeasureTerm, Measure).
 
+fix_dbpunits(Subject, Predicate, literal(type('http://sw.opencyc.org/concept/Mx4rvVjrc5wpEbGdrcN5Y29ycA', MinutesNew))) :-
+	rdf(Subject, Predicate, literal(type(dbo:minute, Value))),
+	atomic_list_concat([MinutesA, SecondsA], ':', Value),
+	catch(atom_number(MinutesA, Minutes), _, fail),
+	catch(atom_number(SecondsA, Seconds), _, fail),
+	MinutesNew is Minutes + Seconds / 60.
+
 term_to_literal(Term, literal(type(Type, Value))) :-
 	Term =.. [Symbol, ValueN],
 	atom_number(Value, ValueN),
@@ -91,13 +129,6 @@ unit of measure for the value in the rdf:value predicate.
 @param Object the Object of the predicate being sought
 @param Graph the named graph containing the original triple source
 */
-fetch(Subject, Predicate, ObjectNode, user) :-
-    \+rdfs_individual_of(Subject, rdfs:'Class'),
-    rdf(Subject, Predicate, ObjectNode, user), !.
-
-fetch(Synset, Predicate, ObjectNode, user) :-
-	rdfs_individual_of(Synset, wns:'Synset'),
-	rdf(Synset, Predicate, ObjectNode, user), !.
 
 % Fix the junk in DBPedia. Some DBPedia number triples are stored as
 % text, like "6,371.0 km"@en, which the system needs as a typed literal of "6371.0"^^dbo:kilometre
@@ -115,8 +146,20 @@ fetch(Subject, Predicate, _, _) :-
 	fail.  % Force backtracking. This looks really weird, but it's necessary
 	       % for the rest of the fetch plans to execute.
 
+fetch(Subject, Predicate, _, _) :-
+	rdf_transaction((
+		rdf(Subject, Predicate, literal(type(dbo:minute, V))),
+		\+rdf(Subject, Predicate, _Object, user),
+		fix_dbpunits(Subject, Predicate, Literal),
+		rdf_update(Subject, Predicate, literal(type(dbo:minute, V)), object(Literal))
+	)), fail.
+
 %%%%%%%%%%%%%% General purpose plans %%%%%%%%%%%%%%%
 % Fetch epsilon value for a Class
+fetch(Subject, Predicate, ObjectNode, user) :-
+    \+rdfs_individual_of(Subject, rdfs:'Class'),
+    rdf(Subject, Predicate, ObjectNode, user), !.
+
 fetch(Class, Predicate, ObjectNode, user) :-
     \+rdf(Class, Predicate, ObjectNode, user),
     epsilon_exists(Class),
@@ -129,7 +172,7 @@ fetch(Class, Predicate, ObjectNode, user) :-
 fetch(Subject, Predicate, ObjectNode, Graph) :-
     \+rdf(Subject, Predicate, _Object, user),
     \+rdfs_individual_of(Subject, rdfs:'Class'),
-    rdf(Subject, Predicate, literal(type(Type, ObjectN)), Graph:_GraphID),
+    rdf(Subject, Predicate, literal(type(Type, ObjectN)), Graph:_GraphID), !,
     store_statement(Subject, Predicate, literal(type(Type, ObjectN)), Graph, ObjectNode).
 
 % Fetch indirect value for non-class that has not already been stored in
@@ -190,10 +233,20 @@ fetch(Class, Predicate, ObjectNode, user) :-
     rdf_transaction((
     	rdf_node(EpsilonNode),
     	rdf_assert(EpsilonNode, rdf:type, Class),
-    	rdf_assert(EpsilonNode, rdf:type, gu:'Epsilon')
-    )),
+    	rdf_assert(EpsilonNode, rdf:type, gu:'Epsilon'))),
     fetch(EpsilonNode, Predicate, ObjectNode, _).
-  
+    
+% Remove blank Epsilon node
+%fetch(Class, _, _, user) :-
+%	epsilon_exists(Class),
+%	rdfs_individual_of(Class, rdfs:'Class'),
+%	rdf_transaction((
+%		rdf(EpsilonNode, rdf:type, Class),
+%		rdf(EpsilonNode, rdf:type, gu:'Epsilon'),
+%		\+rdf(EpsilonNode, rdf:value, _),
+%		rdf_retractall(EpsilonNode, _, _, user)
+%	)), fail.
+	
 %%%%%%%%%%%%%% User Interaction Plans %%%%%%%%%%%%%%
 % Ask the user for a value for an object
 fetch(Subject, Predicate, ObjectNode, user) :-
@@ -211,6 +264,16 @@ fetch(Subject, Predicate, ObjectNode, user) :-
     	Class \= 'http://www.inf.ed.ac.uk/2009/06/01/guesstimation/Epsilon')),
     ask_user(Class, Predicate, type(Type, N)),
     store_statement(Subject, Predicate, literal(type(Type, N)), gu:'CurrentUser', ObjectNode).
+
+%%%%%% Experimental, backtrack with superclass %%%%%%%
+%fetch(EpsilonNode, Predicate, ObjectNode, user) :-
+%	rdfs_individual_of(EpsilonNode, gu:'Epsilon'),
+%	\+rdf(EpsilonNode, rdf:value, _),
+%	rdf_transaction((
+%		rdfs_individual_of(EpsilonNode, SuperClass1),
+%		rdfs_subclass_of(SuperClass1, ocyc:'Mx4rvVj27ZwpEbGdrcN5Y29ycA'),
+%		fetch(SuperClass1, Predicate, ObjectNode, user)
+%	)).
 
 %%%%%%%%%%%%%% End of Fetch plans %%%%%%%%%%%%%%%
 

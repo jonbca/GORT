@@ -112,7 +112,7 @@ symbol_uri(Symbol, UnitURI) :-
 	cyclify(UnitURI, Symbol), !.
 
 symbol_uri(UnitURI, CycURI) :-
-    solve(UnitURI, gu:prologSymbol, [literal(_), CycURI |_]).
+    solve(UnitURI, gu:prologSymbol, [literal(_), CycURI |_]), !.
 
 %% scale_factor(+UnitURI, -Factor) is det.
 %
@@ -129,7 +129,7 @@ scale_factor(UnitURI, Factor) :-
 
 scale_factor(UnitURI, Factor) :-
 	rdfs_individual_of(UnitURI, gu:productUnits),
-	findall(UnitPart, rdf(UnitURI, gu:units, UnitPart), UnitParts),
+	findall(UnitPart, rdf_has(UnitURI, gu:units, UnitPart), UnitParts),
 	get_all_scale_factors(UnitParts, Factors),
 	product_list(Factors, Factor).
 	

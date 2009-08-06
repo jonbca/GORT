@@ -34,8 +34,8 @@ the property converted to the type specified in the Type parameter.
 get_items(Domain, Property, type(Type, Value)) :-
     var(Type),
     rdfs_individual_of(Item, Domain),
-    rdf_has(Item, Property, literal(ValueType)),
-    ValueType = type(Type, Value).
+    fix_dbpunits(Item, Property, ValueType),
+    ValueType = literal(type(Type, Value)).
 
 get_items(Domain, Property, type(Type, Value)) :-
     \+var(Type),
@@ -64,6 +64,8 @@ convert_list( [type(Type, Value) | Tail], TargetUnits, New ) :-
     
 do_conversion(Value, Type, NewValue, TargetUnits) :-
     number(Value),
+    rdf(TargetUnits, gu:scaleFactor, literal(type(xsd:float, '1.0'))),
+    same_dimension(TargetUnits, Type), !,
     convert(Value, Type, NewValue, TargetUnits).     %%FIXME
     
 do_conversion(Value, Type, NewValue, TargetUnits) :-
