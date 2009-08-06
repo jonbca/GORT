@@ -192,23 +192,14 @@ fetch(Class, Predicate, ObjectNode, user) :-
     	rdf_assert(EpsilonNode, rdf:type, Class),
     	rdf_assert(EpsilonNode, rdf:type, gu:'Epsilon')
     )),
-    fetch(EpsilonNode, Predicate, ObjectNode, _).%,
-    %rdf(EpObjectNode, rdf:value, literal(type(xsd:float, N))),
-    %rdf(EpObjectNode, gu:units, Type), !, 
-    %store_statement(EpsilonNode, Predicate, literal(type(Type, N)), gu:'CurrentUser', ObjectNode).
-
-% Epsilon node exists, but don't have a value for it for this predicate
-fetch(Class, Predicate, ObjectNode, user) :-
-	epsilon_exists(Class, EpsilonNode),
-	\+rdf(EpsilonNode, Predicate, _),
-	fetch(EpsilonNode, Predicate, ObjectNode, _).
-    
+    fetch(EpsilonNode, Predicate, ObjectNode, _).
+  
 %%%%%%%%%%%%%% User Interaction Plans %%%%%%%%%%%%%%
 % Ask the user for a value for an object
 fetch(Subject, Predicate, ObjectNode, user) :-
     \+rdf(Subject, Predicate, _, user),
     \+rdfs_individual_of(Subject, rdfs:'Class'),
-    \+rdfs_individual_of(Subject, gu:'Epsilon'),
+    \+rdf(Subject, rdf:type, gu:'Epsilon'),
     ask_user(Subject, Predicate, type(Type, N)),
     store_statement(Subject, Predicate, literal(type(Type, N)), gu:'CurrentUser', ObjectNode).
 
