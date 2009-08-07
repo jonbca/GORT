@@ -26,11 +26,15 @@ s_fetch(Subject, Predicate, ObjectNode, user) :-
 	s_fetch(Subject, ocyc:'Mx4rvVjaGJwpEbGdrcN5Y29ycA', ObjectNode, user). % rewrite to diameter
 
 s_fetch(Subject, Predicate, ObjectNode, user) :-
+	rdfs_subproperty_of(Predicate, ocyc:'Mx4rvVjgRJwpEbGdrcN5Y29ycA'),
+	s_fetch(Subject, ocyc:'Mx4rvVjaGJwpEbGdrcN5Y29ycA', ObjectNode, user).
+
+s_fetch(Subject, Predicate, ObjectNode, user) :-
 	rdfs_individual_of(Subject, ocyc:'Mx4rwQBfkZwpEbGdrcN5Y29ycA'), % RoundObject
 	rdfs_individual_of(Subject, ocyc:'Mx4r1jUXeq00EdmAAAACs0uFOQ'), % ThreeDimensionalThing
 	rdfs_subproperty_of(Predicate, ocyc:'Mx4rvVjbrZwpEbGdrcN5Y29ycA'), % volumeOfObject
 	!,
-	fetch(Subject, ocyc:'Mx4rvVjaGJwpEbGdrcN5Y29ycA', ObjectNodeD, _), % get diameter
+	fetch(Subject, ocyc:'Mx4rvVi6yZwpEbGdrcN5Y29ycA', ObjectNodeD, _), % get radius
 	rdf(ObjectNodeD, rdf:value, literal(type(xsd:float, Value))),
 	rdf(ObjectNodeD, gu:units, Units),
 	!,
@@ -151,7 +155,7 @@ s_fetch(Subject, Predicate, ObjectNode, user) :-
 	!,
 	fetch(Subject, ocyc:'Mx4rvVjbZpwpEbGdrcN5Y29ycA', LengthNode, _), % lengthOfObject
 	fetch(Subject, ocyc:'Mx4rvVjgA5wpEbGdrcN5Y29ycA', WidthNode, _), % widthOfObject
-	fetch(Subject, ocyc:'Mx4rvViZ85wpEbGdrcN5Y29ycA', DepthNode, _), % depthOfObject
+	fetch(Subject, ocyc:'Mx4rvVjgRJwpEbGdrcN5Y29ycA', DepthNode, _), % heightOfObject
 	%% Extract length and width for object
 	rdf(LengthNode, rdf:value, literal(type(xsd:float, Length))),
 	rdf(LengthNode, gu:units, LengthUnits),

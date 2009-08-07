@@ -34,7 +34,7 @@ the property converted to the type specified in the Type parameter.
 get_items(Domain, Property, type(Type, Value)) :-
     var(Type),
     rdfs_individual_of(Item, Domain),
-    fix_dbpunits(Item, Property, ValueType),
+    (fix_dbpunits(Item, Property, ValueType) ; rdf_has(Item, Property, ValueType)),
     ValueType = literal(type(Type, Value)).
 
 get_items(Domain, Property, type(Type, Value)) :-
@@ -64,11 +64,18 @@ convert_list( [type(Type, Value) | Tail], TargetUnits, New ) :-
     
 do_conversion(Value, Type, NewValue, TargetUnits) :-
     number(Value),
+    var(TargetUnits),
     rdf(TargetUnits, gu:scaleFactor, literal(type(xsd:float, '1.0'))),
     same_dimension(TargetUnits, Type), !,
     convert(Value, Type, NewValue, TargetUnits).     %%FIXME
     
 do_conversion(Value, Type, NewValue, TargetUnits) :-
+	\+number(Value),
+	var(TargetUnits),
+	rdf(CycUnits, owl:sameAs, Type),
+	rdf(TargetUnits, gu:scaleFactor, literal(type(xsd:float, '1.0'))),
+	same_dimension(CycUnits, TargetUnits),
+    !,
     catch(
     	atom_number(Value, ValueN),
     	_,
@@ -76,6 +83,15 @@ do_conversion(Value, Type, NewValue, TargetUnits) :-
     ),
     convert(ValueN, Type, NewValue, TargetUnits).    %%FIXME
 
+do_conversion(Value, Type, NewValue, TargetUnits) :-
+	\+number(Value),
+	\+var(TargetUnits),
+    catch(
+    	atom_number(Value, ValueN),
+    	_,
+    	fail
+    ),
+    convert(ValueN, Type, NewValue, TargetUnits). 
 /** average_list(+List, -Average) is det.
 Returns the average value of all elements in a list.
 

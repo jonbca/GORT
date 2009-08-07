@@ -171,7 +171,7 @@ same_dimension(UnitAURI, UnitBURI) :-
     	rdfs_subclass_of(UnitAClass, ocyc:'Mx4rVG-MSJ_AQdiKntlmhkDKfQ') % Multi-dimensional unit of measure
     ),
     rdf(UnitBURI, rdf:type, UnitAClass).
-    
+	
 length_unit(Measure) :-
     Measure =.. [Symbol, _],
     symbol_uri(Symbol, SymbolURI),

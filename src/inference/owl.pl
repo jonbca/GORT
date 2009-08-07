@@ -20,9 +20,13 @@
 :- rdf_set_predicate(owl:'sameAs', transitive(true)),
    rdf_set_predicate(owl:'sameAs', symmetric(true)).
 
-:- rdf_meta solve(r, r, -), solve(r, r, t, -).
+:- rdf_meta solve(r, r, -), solve(r, r, t, -), owl_individual_of(r,r).
 
 noprove(solve).    % too verbose
+
+owl_individual_of(Object1, Class) :-
+	rdf(Object1, rdf:type, Class1),
+	depth_first_star_labelled([Class1/[]], [Class1], Class/_).
 
 /* solve(+Start, +Predicate, ?Solution) is multi.
 Solve takes a Start node and target Predicate, and returns a solution path

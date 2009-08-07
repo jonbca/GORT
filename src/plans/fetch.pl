@@ -167,6 +167,21 @@ fetch(Class, Predicate, ObjectNode, user) :-
     rdf(TargetSubject, rdf:type, Class),
     rdf(TargetSubject, Predicate, ObjectNode).
 
+fetch(Class, Predicate, ObjectNode, user) :-
+    \+rdf(Class, Predicate, ObjectNode, user),
+    epsilon_exists(Class, EpsilonNode),
+    \+rdf(EpsilonNode, Predicate, ObjectNode),
+    fetch(EpsilonNode, Predicate, ObjectNode, user).
+
+fetch(Class, Predicate, ObjectNode, user) :-
+	\+rdf(Class, Predicate, ObjectNode, user),
+	epsilon_exists(Class),
+	rdfs_individual_of(TargetSubject, gu:'Epsilon'),
+	owl_individual_of(TargetSubject, Class),
+	once((rdf(TargetSubject, rdf:type, Class),
+    	Class \= 'http://www.inf.ed.ac.uk/2009/06/01/guesstimation/Epsilon')),
+	rdf_has(TargetSubject, Predicate, ObjectNode).
+	
 % Fetch direct value for non-class, that has not already been stored in
 % the user ontology
 fetch(Subject, Predicate, ObjectNode, Graph) :-
@@ -196,7 +211,7 @@ fetch(Subject, Predicate, ObjectNode, Graph) :-
 fetch(Subject, Predicate, ObjectNode, user) :-
 	\+rdf(Subject, Predicate, _Object, user),
 	\+rdfs_individual_of(Subject, rdfs:'Class'),
-	rdfs_individual_of(Subject, ocyc:'Mx4rvVjpUZwpEbGdrcN5Y29ycA'), % Spatial thing
+	%rdfs_individual_of(Subject, ocyc:'Mx4rvVjpUZwpEbGdrcN5Y29ycA'), % Spatial thing
 	( rdfs_individual_of(Predicate, ocyc:'Mx4rvVjuYJwpEbGdrcN5Y29ycA')
 	 ; \+rdfs_individual_of(Predicate, ocyc:'Mx4rvVjuYJwpEbGdrcN5Y29ycA'),
 	     rdfs_individual_of(Predicate, ocyc:'Mx4rvVi5xJwpEbGdrcN5Y29ycA')
@@ -236,16 +251,14 @@ fetch(Class, Predicate, ObjectNode, user) :-
     	rdf_assert(EpsilonNode, rdf:type, gu:'Epsilon'))),
     fetch(EpsilonNode, Predicate, ObjectNode, _).
     
-% Remove blank Epsilon node
-%fetch(Class, _, _, user) :-
-%	epsilon_exists(Class),
-%	rdfs_individual_of(Class, rdfs:'Class'),
-%	rdf_transaction((
-%		rdf(EpsilonNode, rdf:type, Class),
-%		rdf(EpsilonNode, rdf:type, gu:'Epsilon'),
-%		\+rdf(EpsilonNode, rdf:value, _),
-%		rdf_retractall(EpsilonNode, _, _, user)
-%	)), fail.
+fetch(Subject, Predicate, ObjectNode, user) :-
+	rdfs_individual_of(Subject, gu:'Epsilon'),
+	\+rdfs_individual_of(Subject, rdfs:'Class'),
+	\+rdf(Subject, Predicate, _, user),
+	once((rdf(Subject, rdf:type, Class),
+    	Class \= 'http://www.inf.ed.ac.uk/2009/06/01/guesstimation/Epsilon')),
+    get_average_value(Class, Predicate, type(Type, N)),
+    store_statement(Subject, Predicate, literal(type(Type, N)), gu:'System', ObjectNode).
 	
 %%%%%%%%%%%%%% User Interaction Plans %%%%%%%%%%%%%%
 % Ask the user for a value for an object
@@ -286,8 +299,8 @@ epsilon_exists(Class) :-
 
 epsilon_exists(Class, EpsilonNode) :-
 	rdfs_individual_of(Class, rdfs:'Class'),
-    rdfs_individual_of(EpsilonNode, Class),
-    rdfs_individual_of(EpsilonNode, gu:'Epsilon'), !.
+	rdfs_individual_of(EpsilonNode, gu:'Epsilon'),
+    rdfs_individual_of(EpsilonNode, Class), !.
 
 ask_user(Class, Property, type(Type, Value)) :-
     (cyclify(Class, EnglishClass) -> true ; EnglishClass = Class ),
