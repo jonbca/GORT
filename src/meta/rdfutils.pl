@@ -56,7 +56,7 @@ print_value_node(NodeURI) :-
 	write(' or '),
 	write(OOMValue),
 	rdf(NodeURI, gu:units, Units),
-	once(symbol_uri(Symbol, Units)),
+	once(symbol_for_alt(Symbol, Units)),
 	write(' '), write(Symbol), nl.
 
 /** dump_customised_ontology is multi.
@@ -104,6 +104,22 @@ Print out a description of a non-epsilon node.
 */
 print_node(Subj) :-
 	\+rdf(Subj, rdf:type, gu:'Epsilon', user),
+	\+rdf(Subj, rdf:type, gu:'ResultNode', user),
+	rdf(Subj, Pred, Obj, user),
+	Pred \= 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
+	(once(rdf(Subj, rdfs:label, literal(EnglishSubj))) -> true ; Subj = EnglishSubj),
+	write(EnglishSubj),
+	write(' for '),
+	(once(rdf(Pred, rdfs:label, literal(EnglishPred))) -> true ; Pred = EnglishPred),
+	write(EnglishPred),
+	print_value_node(Obj),
+	reification(rdf(Subj, Pred, Obj), dc:source, Source, _),
+    write('      source: '),
+    ( once(rdf(Source, rdfs:label, literal(lang(en, Label)))) -> true ; Source = Label ),
+    write(Label), nl.
+    
+print_node(Subj) :-
+	rdf(Subj, rdf:type, gu:'ResultNode', user),
 	rdf(Subj, Pred, Obj, user),
 	Pred \= 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
 	(once(rdf(Subj, rdfs:label, literal(EnglishSubj))) -> true ; Subj = EnglishSubj),

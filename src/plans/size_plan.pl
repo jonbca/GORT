@@ -11,6 +11,7 @@
 :- use_module(library('semweb/rdf_db')).
 
 :- rdf_meta total_size(r, r, r, r, -).
+:- rdf_meta total_size_s(r, r, r, r, -).
 
 total_size(Class, Parameter, MagSubject, MagPredicate, literal(type(Type, Guess))) :-
     fetch(Class, Parameter, ObjectNode, _),   % Fetch the resource whose size we need
@@ -22,3 +23,15 @@ total_size(Class, Parameter, MagSubject, MagPredicate, literal(type(Type, Guess)
 magnitude(Class, Predicate, Magnitude) :-
     fetch(Class, Predicate, ObjectNode, _),
     fetch(ObjectNode, rdf:value, literal(type(gu:oom, Magnitude)), user).
+    
+total_size_s(Class, Parameter, MagSubject, MagPredicate, OutNode) :-
+    fetch(Class, Parameter, ObjectNode, _),   % Fetch the resource whose size we need
+    fetch(ObjectNode, rdf:value, literal(type(gu:oom, ValueOM)), user), % Pull out the OM value
+    fetch(ObjectNode, gu:units, Type, user),  % Pull out the type and such
+    magnitude(MagSubject, MagPredicate, MagnitudeOM),
+	mult(ValueOM, MagnitudeOM, Guess),
+	rdf_node(OutNode),
+	rdf_assert(OutNode, rdf:type, gu:'ResultNode'),
+	from_om(V, Guess),
+	store_statement(OutNode, gu:result, literal(type(Type, V)),
+			gu:'GuesstimationTechnique', _).

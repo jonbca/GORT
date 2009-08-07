@@ -9,11 +9,12 @@
 %% a certain measure.
 :- use_module(library('semweb/rdf_db')).
 :- ensure_loaded('../declarations').
+:- ensure_loaded('dimanalysis').
 :- rdf_meta quantity_of(r, r, r, r, -).
 
 % Must be same dimension!
 quantity_of(SmallerClass, SmallerPredicate, BiggerClass,
-		BiggerPredicate, literal(type(gu:oom, Guess))) :-
+		BiggerPredicate, OutNode) :-
     fetch(SmallerClass, SmallerPredicate, ObjectNode, _),
     fetch(ObjectNode, rdf:value, literal(type(xsd:float, SmallerValue)), user),
     fetch(ObjectNode, gu:units, SmallerType, user),
@@ -23,9 +24,14 @@ quantity_of(SmallerClass, SmallerPredicate, BiggerClass,
     convert(SmallerValue, SmallerType, SmallerValueConverted, BiggerType),    %%FIXME
     to_om(SmallerValueConverted, SmallerValueConvertedOM),
     to_om(BiggerValue, BiggerValueOM),
-    div(BiggerValueOM, SmallerValueConvertedOM, Guess).
+    div(BiggerValueOM, SmallerValueConvertedOM, Guess),
+    rdf_node(OutNode),
+	rdf_assert(OutNode, rdf:type, gu:'ResultNode'),
+	from_om(V, Guess),
+	store_statement(OutNode, gu:result, literal(type(gu:oom, V)),
+			gu:'GuesstimationTechnique', _OutVNode).
     
-quantity_of(SmallerClass, BiggerClass, Predicate, literal(type(gu:oom, Guess))) :-
+quantity_of(SmallerClass, BiggerClass, Predicate, OutNode) :-
 	fetch(SmallerClass, Predicate, ObjectNode, _),
 	fetch(ObjectNode, rdf:value, literal(type(xsd:float, SmallerValue)), user),
     fetch(ObjectNode, gu:units, SmallerType, user),
@@ -35,15 +41,9 @@ quantity_of(SmallerClass, BiggerClass, Predicate, literal(type(gu:oom, Guess))) 
     convert(SmallerValue, SmallerType, SmallerValueConverted, BiggerType),    %%FIXME
     to_om(SmallerValueConverted, SmallerValueConvertedOM),
     to_om(BiggerValue, BiggerValueOM),
-    div(BiggerValueOM, SmallerValueConvertedOM, Guess).
-    
-quantity_of_div(TopClass, TopPredicate, BottomClass, BottomPredicate, Out) :-
-	fetch(TopClass, TopPredicate, TopResult),
-	fetch(BottomClass, BottomPredicate, BottomResult),
-	rdf(TopResult, gu:units, TopUnits),
-	rdf(BottomResult, gu:units, BottomUnits),
-	rdf(TopResult, rdf:value, literal(type(xsd:float, TopResultN))),
-	rdf(BottomResult, rdf:value, literal(type(xsd:float, BottomResultN))),
-	divide(units(literal(type(xsd:float, TopResultN)), TopUnits),
-		units(literal(type(xsd:float, BottomResultN)), BottomUnits),
-		Out).
+    div(BiggerValueOM, SmallerValueConvertedOM, Guess),
+    rdf_node(OutNode),
+	rdf_assert(OutNode, rdf:type, gu:'ResultNode'),
+	from_om(V, Guess),
+	store_statement(OutNode, gu:result, literal(type(gu:oom, V)),
+			gu:'GuesstimationTechnique', _OutVNode).

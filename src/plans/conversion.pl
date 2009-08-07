@@ -113,6 +113,9 @@ symbol_uri(Symbol, UnitURI) :-
 
 symbol_uri(UnitURI, CycURI) :-
     solve(UnitURI, gu:prologSymbol, [literal(_), CycURI |_]), !.
+    
+symbol_for_alt(Symbol, AltURI) :-
+	solve(AltURI, gu:prologSymbol, [literal(Symbol) | _]), !.
 
 %% scale_factor(+UnitURI, -Factor) is det.
 %

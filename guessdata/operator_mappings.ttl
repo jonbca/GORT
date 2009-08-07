@@ -45,6 +45,13 @@ gu:CurrentUser      rdf:type							gu:User ;
 					rdfs:comment						"The current user of the Guesstimation System" ;
 					rdfs:label							"UserEntry"@en .
 
+gu:result			rdf:type							rdfs:Property ;
+					rdfs:label							"GuesstimationResult"@en.
+
+gu:ResultNode		rdf:subClassOf						owl:Thing ;
+					rdfs:label							"GuesstimationResult"@en.
+
+
 gu:oom				rdf:type							ocyc:Mx4rQ-Ffxj-XQdeRMsuOebkIHQ ;
 					rdfs:comment						"Order of magnitude datatype";
 					rdfs:label							"OrderOfMagnitude" .
@@ -185,7 +192,8 @@ ocyc:Mx4rvVihHJwpEbGdrcN5Y29ycA      gu:prologSymbol "cu_cm" ;
 									 gu:scaleFactor  "0.001"^^xsd:float .
 									 
 ocyc:Mx4rxGkwDgwMQdmHjv2_XNJ5zA      gu:prologSymbol "cu_km" ;
-									 gu:scaleFactor  "1000000000000.0"^^xsd:float .
+									 gu:scaleFactor  "1000000000000.0"^^xsd:float ;
+									 owl:sameAs      dbo:cubicKilometre.
 
 ocyc:Mx8Ngh4rvViLE5wpEbGdrcN5Y29ycB4rvVj0SpwpEbGdrcN5Y29ycA    gu:prologSymbol "ml" ;
 									 gu:scaleFactor  "0.001"^^xsd:float .
