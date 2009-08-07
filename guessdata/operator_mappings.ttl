@@ -77,6 +77,14 @@ gu:denominatorUnits rdfs:subPropertyOf					gu:units;
 					rdfs:domain							gu:ratio;
 					rdfs:range							rdfs:Literal.
 
+gu:leftUnits		rdfs:subPropertyOf					gu:units;
+					rdfs:comment						"left units for product";
+					rdfs:label							"LeftUnits".
+
+gu:rightUnits		rdfs:subPropertyOf					gu:units;
+					rdfs:comment						"right units for product";
+					rdfs:label							"RightUnits".
+
 gu:GuesstimationTechnique rdf:subClassOf                owl:Thing ;
 					rdfs:label							"GuesstimationTechnique".
 					

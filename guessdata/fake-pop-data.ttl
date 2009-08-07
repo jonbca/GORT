@@ -29,6 +29,10 @@ dbp:meanRadius rdfs:subPropertyOf
 fb:population_total rdfs:subPropertyOf
                        ocyc:Mx4rvVjy1pwpEbGdrcN5Y29ycA .
 
+dbpedia:Earth owl:sameAs ocyc:Mx4rvVkL_pwpEbGdrcN5Y29ycA .
+dbp:equatorialRadius rdfs:subPropertyOf ocyc:Mx4rvVi6yZwpEbGdrcN5Y29ycA .
+dbo:height rdfs:subPropertyOf ocyc:Mx4rvVjgRJwpEbGdrcN5Y29ycA .
+dbo:Person rdfs:subClassOf ocyc:Mx4rvViAkpwpEbGdrcN5Y29ycA .
 
 # I can't believe this one is missing from OpenCyc
 ocyc:Mx4rvVijQZwpEbGdrcN5Y29ycA owl:sameAs factbook:China .
