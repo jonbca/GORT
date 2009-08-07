@@ -16,6 +16,8 @@
 :- ensure_loaded('conversion').
 :- ensure_loaded('calculations').
 
+:- rdf_meta distance_between(r, r, -).
+
 /** distance(+PointA, +PointB, -Distance) is det.
 Computes the great-circle distance between PointA and PointB, and places
 the result in Distance (in km). This is an implementation of the
@@ -52,12 +54,18 @@ is identified by a URI. If lat/long is available for both, the distance will be 
 @param EndFeature the ending location
 @param Distance the distance from the start point to the end point.
 */
-distance_between(StartFeature, EndFeature, Distance) :-
+distance_between(StartFeature, EndFeature, OutNode) :-
 	feature_latitude(StartFeature, StartLat),
 	feature_longitude(StartFeature, StartLong),
 	feature_latitude(EndFeature, EndLat),
 	feature_longitude(EndFeature, EndLong),
-	distance(point(StartLat, StartLong), point(EndLat, EndLong), Distance).
+	distance(point(StartLat, StartLong), point(EndLat, EndLong), Distance),
+	rdf_node(OutNode),
+	rdf_assert(OutNode, rdf:type, gu:'ResultNode'),
+	Distance =.. [Symbol, Value],
+	symbol_uri(Symbol, SymbolURI),
+	store_statement(OutNode, gu:result, literal(type(SymbolURI, Value)),
+		gu:'GuesstimationTechnique', _).
     
 feature_latitude(Feature, Latitude) :-
     solve(Feature, 'http://www.w3.org/2003/01/geo/wgs84_pos#lat', [literal(type(xsd:float, LatitudeA)) | _], _),

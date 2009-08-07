@@ -93,7 +93,7 @@ gu:rightUnits		rdfs:subPropertyOf					gu:units;
 					rdfs:label							"RightUnits".
 
 gu:GuesstimationTechnique rdf:subClassOf                owl:Thing ;
-					rdfs:label							"GuesstimationTechnique".
+					rdfs:label							"GuesstimationTechnique"@en.
 					
 gu:Geography		rdf:type							gu:GuesstimationTechnique;
 					rdfs:label							"Geography"@en.

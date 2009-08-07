@@ -23,13 +23,55 @@ Records a statement in the customised ontology, and adds its reification.
 */
 store_statement(Subject, Predicate, literal(type(Type, Value)), Graph, ObjectNode) :-
 	\+var(Type),
+	once(rdf(Subject, Predicate, _)),
+    rdf_transaction((
+    	rdf_retractall(Subject, Predicate, _),
+	    rdf_node(ObjectNode),
+	    rdf_assert(Subject, Predicate, ObjectNode),
+	    rdf_assert(ObjectNode, rdf:value, literal(type(xsd:float, Value))),
+	    to_om(Value, ValueOM),
+	    rdf_assert(ObjectNode, rdf:value, literal(type(gu:oom, ValueOM))),
+	    rdf_assert(ObjectNode, gu:units, Type),
+	    reify_create(rdf(Subject, Predicate, ObjectNode), dc:source, Graph, _)
+    )).
+
+store_statement(Subject, Predicate, literal(type(Type, Value)), Graph, ObjectNode) :-
+	var(Type),
+	once(rdf(Subject, Predicate, _)),
+	fix_units(Subject, Predicate, Type, Value),
+    rdf_transaction((
+    	rdf_retractall(Subject, Predicate, _),
+	    rdf_node(ObjectNode),
+	    rdf_assert(Subject, Predicate, ObjectNode),
+	    rdf_assert(ObjectNode, rdf:value, literal(type(xsd:float, Value))),
+	    to_om(Value, ValueOM),
+	    rdf_assert(ObjectNode, rdf:value, literal(type(gu:oom, ValueOM))),
+	    rdf_assert(ObjectNode, gu:units, Type),
+	    reify_create(rdf(Subject, Predicate, ObjectNode), dc:source, Graph, _)
+    )).
+
+
+store_statement(Subject, Predicate, literal(type(Type, Value)), Graph, ObjectNode) :-
+	\+var(Type),
 	\+rdf(Subject, Predicate, _),
+	Value \= om(_,_),
     rdf_transaction((
 	    rdf_node(ObjectNode),
 	    rdf_assert(Subject, Predicate, ObjectNode),
 	    rdf_assert(ObjectNode, rdf:value, literal(type(xsd:float, Value))),
 	    to_om(Value, ValueOM),
 	    rdf_assert(ObjectNode, rdf:value, literal(type(gu:oom, ValueOM))),
+	    rdf_assert(ObjectNode, gu:units, Type),
+	    reify_create(rdf(Subject, Predicate, ObjectNode), dc:source, Graph, _)
+    )).
+
+store_statement(Subject, Predicate, literal(type(Type, om(M,E))), Graph, ObjectNode) :-
+	\+var(Type),
+	\+rdf(Subject, Predicate, _),
+    rdf_transaction((
+	    rdf_node(ObjectNode),
+	    rdf_assert(Subject, Predicate, ObjectNode),
+	    rdf_assert(ObjectNode, rdf:value, literal(type(gu:oom, om(M,E)))),
 	    rdf_assert(ObjectNode, gu:units, Type),
 	    reify_create(rdf(Subject, Predicate, ObjectNode), dc:source, Graph, _)
     )).
@@ -49,34 +91,8 @@ store_statement(Subject, Predicate, literal(type(Type, Value)), Graph, ObjectNod
 	    reify_create(rdf(Subject, Predicate, ObjectNode), dc:source, Graph, _)
     )).
 
-store_statement(Subject, Predicate, literal(type(Type, Value)), Graph, ObjectNode) :-
-	\+var(Type),
-	once(rdf(Subject, Predicate, _)),
-    rdf_transaction((
-    	rdf_retractall(Subject, Predicate, _),
-	    rdf_node(ObjectNode),
-	    rdf_assert(Subject, Predicate, ObjectNode),
-	    rdf_assert(ObjectNode, rdf:value, literal(type(xsd:float, Value))),
-	    to_om(Value, ValueOM),
-	    rdf_assert(ObjectNode, rdf:value, literal(type(gu:oom, ValueOM))),
-	    rdf_assert(ObjectNode, gu:units, Type),
-	    reify_create(rdf(Subject, Predicate, ObjectNode), dc:source, Graph, _)
-    )).
 
-store_statement(Subject, Predicate, literal(type(Type, Value)), Graph, ObjectNode) :-
-	var(Type),
-	once(rdf(Subject, Predicate, _)),
-	fix_units(Subject, Predicate, Type, Value),
-    rdf_transaction((
-    	rdf_retractall(Subject, Predicate, _),
-	    rdf_node(ObjectNode),
-	    rdf_assert(Subject, Predicate, ObjectNode),
-	    rdf_assert(ObjectNode, rdf:value, literal(type(xsd:float, Value))),
-	    to_om(Value, ValueOM),
-	    rdf_assert(ObjectNode, rdf:value, literal(type(gu:oom, ValueOM))),
-	    rdf_assert(ObjectNode, gu:units, Type),
-	    reify_create(rdf(Subject, Predicate, ObjectNode), dc:source, Graph, _)
-    )).
+
 
 /** fix_units(+Subject, +Property, -Type, +Value) is det.
 
@@ -165,7 +181,7 @@ fetch(Class, Predicate, ObjectNode, user) :-
     epsilon_exists(Class),
     rdf(TargetSubject, rdf:type, gu:'Epsilon'),
     rdf(TargetSubject, rdf:type, Class),
-    rdf(TargetSubject, Predicate, ObjectNode).
+    rdf(TargetSubject, Predicate, ObjectNode), !.
 
 fetch(Class, Predicate, ObjectNode, user) :-
     \+rdf(Class, Predicate, ObjectNode, user),

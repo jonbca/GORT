@@ -10,6 +10,7 @@
 :- rdf_load('../guessdata/dbpedia_extracts/persons.ttl').
 :- ensure_loaded('../plans/division_plan').
 :- ensure_loaded('../plans/size_plan').
+:- ensure_loaded('../plans/distances').
 :- rdf_load('../guessdata/dbpedia_extracts/Loch_Ness.rdf').
 
 volume_cell(TotalVolume) :-
@@ -42,4 +43,16 @@ qty_blood_earth(TotalVolume) :-
 	qty_cells_human_body(CellCount),!,
 	total_size_s(CellCount, gu:result, Earth, Inhabitants, TotalCellCount),!,
 	total_size_s(Cell, VolConcept, TotalCellCount, gu:result, TotalVolume),!.
-	
+
+%%%%%   EVALUATION PLAN 4 - TOTAL HEIGHT OF ALL EUROPEANS?
+total_ht_all_europeans(TotalHeight) :-
+	cyclify(Height, 'heightOfObject'),
+	cyclify(Europe, 'ContinentOfEurope'),
+	cyclify(Inhabitants, 'numberOfInhabitants'),
+	total_size_s(dbo:'Person', Height, Europe, Inhabitants, TotalHeight).
+
+%%%%%   EVALUATION PLAN 5 - TOTAL COUNT HUMANS FROM LON to EDI
+total_humans_london_edinburgh(TotalCount) :-
+	cyclify(Height, 'heightOfObject'),
+	distance_between(dbpedia:'30_St_Mary_Axe', dbpedia:'Arthur''s_Seat,_Edinburgh', DistanceNode),
+	quantity_of(dbo:'Person', Height, DistanceNode, gu:result, TotalCount),!.

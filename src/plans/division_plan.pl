@@ -27,8 +27,7 @@ quantity_of(SmallerClass, SmallerPredicate, BiggerClass,
     div(BiggerValueOM, SmallerValueConvertedOM, Guess),
     rdf_node(OutNode),
 	rdf_assert(OutNode, rdf:type, gu:'ResultNode'),
-	from_om(V, Guess),
-	store_statement(OutNode, gu:result, literal(type(gu:oom, V)),
+	store_statement(OutNode, gu:result, literal(type(xsd:long, Guess)),
 			gu:'GuesstimationTechnique', _OutVNode).
     
 quantity_of(SmallerClass, BiggerClass, Predicate, OutNode) :-
@@ -44,6 +43,5 @@ quantity_of(SmallerClass, BiggerClass, Predicate, OutNode) :-
     div(BiggerValueOM, SmallerValueConvertedOM, Guess),
     rdf_node(OutNode),
 	rdf_assert(OutNode, rdf:type, gu:'ResultNode'),
-	from_om(V, Guess),
-	store_statement(OutNode, gu:result, literal(type(gu:oom, V)),
+	store_statement(OutNode, gu:result, literal(type(xsd:long, Guess)),
 			gu:'GuesstimationTechnique', _OutVNode).

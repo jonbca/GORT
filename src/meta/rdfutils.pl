@@ -50,8 +50,8 @@ reification(rdf(Subject, Predicate, Object), PredicateR, ObjectR, StatementId) :
 	
 print_value_node(NodeURI) :-
 	write(' has value '),
-	rdf(NodeURI, rdf:value, literal(type(xsd:float, FloatValue))),
-	write(FloatValue),
+	( rdf(NodeURI, rdf:value, literal(type(xsd:float, FloatValue))),
+	  write(FloatValue), ! ; true ),
 	rdf(NodeURI, rdf:value, literal(type(gu:oom, OOMValue))),
 	write(' or '),
 	write(OOMValue),

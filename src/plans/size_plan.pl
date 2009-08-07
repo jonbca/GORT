@@ -32,6 +32,5 @@ total_size_s(Class, Parameter, MagSubject, MagPredicate, OutNode) :-
 	mult(ValueOM, MagnitudeOM, Guess),
 	rdf_node(OutNode),
 	rdf_assert(OutNode, rdf:type, gu:'ResultNode'),
-	from_om(V, Guess),
-	store_statement(OutNode, gu:result, literal(type(Type, V)),
+	store_statement(OutNode, gu:result, literal(type(Type, Guess)),
 			gu:'GuesstimationTechnique', _).
