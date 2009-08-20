@@ -13,6 +13,9 @@ It has been tested with version 5.7.12 with the altered rdf_turtle.pl file.
 TO RUN
 ~~~~~~
 1. Decompress the guessdata.tar.bz2. It will create a directory called guessdata.
+
+NOTE: When decompressed, guessdata.tar.bz2 occupies over 600 MB.
+
 2. Issue the following commands to create a cache folder:
 
 $ cd guessdata
