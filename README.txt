@@ -12,12 +12,22 @@ It has been tested with version 5.7.12 with the altered rdf_turtle.pl file.
 
 TO RUN
 ~~~~~~
+1. Decompress the guessdata.tar.bz2. It will create a directory called guessdata.
+2. Issue the following commands to create a cache folder:
 
-1. Locate the guessdata directory. Inside that directory, create a directory
-   called '.cache'.
-   
-2. Enter the src/ directory, and start SWI-Prolog:
-   $ swipl
+$ cd guessdata
+$ mkdir .cache
 
-3. To start the program, type:
-   ?- [guess].
+3. Enter the src folder.
+4. Run SWI-Prolog:
+
+$ swipl
+
+Note that the version installed on DICE is too old to run thisi
+software. You must use version 5.7.12.
+
+5. To start the program, run:
+
+?- [guess].
+
+
