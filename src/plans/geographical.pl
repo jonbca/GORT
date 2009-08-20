@@ -70,7 +70,7 @@ find_value_for_region(RegionURI, Property, Value, _) :-
 	\+solve(RegionURI, Property, _, _),
 	subregions(RegionURI, Subregions, RegionType),
 	cyclify(RegionType, RegionTypeEn),
-	info('Processing region type '), info(RegionTypeEn),
+	%info('Processing region type '), info(RegionTypeEn),
 	figure_for_region(Subregions, Property, FigList),
 	extract_figure_data(FigList, FigNList),
 	sum_list(FigNList, Value),
@@ -92,7 +92,7 @@ figure_for_region( [RegionURI | RegionTail], Property, [region_pop(RegionURI, Fi
 figure_for_region( [RegionURI | RegionTail], Property, Fig ) :-
     \+figure(RegionURI, Property, _),
     cyclify(RegionURI, RegionEn),
-    info('Missing figure for region '), info(RegionEn),
+    %info('Missing figure for region '), info(RegionEn),
     figure_for_region(RegionTail, Property, Fig).
 
 figure(RegionURI, Property, Figure) :-

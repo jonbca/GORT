@@ -17,7 +17,7 @@ quantity_of(SmallerClass, SmallerPredicate, BiggerClass,
 		BiggerPredicate, OutNode) :-
     fetch(SmallerClass, SmallerPredicate, ObjectNode, _),
     fetch(ObjectNode, rdf:value, literal(type(xsd:float, SmallerValue)), user),
-    fetch(ObjectNode, gu:units, SmallerType, user),
+    fetch(ObjectNode, gu:units, SmallerType, user),!,
     fetch(BiggerClass, BiggerPredicate, BiggerObjectNode, _),
     fetch(BiggerObjectNode, rdf:value, literal(type(xsd:float, BiggerValue)), _),
     fetch(BiggerObjectNode, gu:units, BiggerType, user),

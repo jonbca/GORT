@@ -1,6 +1,6 @@
-%%%% 
+%%%%
 %% $Id$
-%% 
+%%
 %% MSc dissertation Guesstimation Project
 %% By Jonathan Abourbih
 %% (c) 2009 The University of Edinburgh
@@ -11,13 +11,13 @@
 :- ensure_loaded('../plans/division_plan').
 :- ensure_loaded('../plans/size_plan').
 :- ensure_loaded('../plans/distances').
-:- rdf_load('../guessdata/dbpedia_extracts/Loch_Ness.rdf').
+%:- rdf_load('../guessdata/dbpedia_extracts/Loch_Ness.rdf').
 
 volume_cell(TotalVolume) :-
 	cyclify(Cell, 'BloodCell'),
 	cyclify(VolConcept, 'volumeOfObject'),
 	fetch(Cell, VolConcept, TotalVolume, _).
-	
+
 volume_human_body(TotalVolume) :-
 	cyclify(VolConcept, 'volumeOfObject'),
 	fetch(dbo:'Person', VolConcept, TotalVolume, _).
@@ -25,9 +25,9 @@ volume_human_body(TotalVolume) :-
 %%%%%   EVALUATION PLAN 1 - HOW MANY CELLS IN HUMAN BODY?
 qty_cells_human_body(TotalCount) :-
 	cyclify(VolConcept, 'volumeOfObject'),
-	cyclify(Cell, 'BloodCell'),
+	cyclify(Cell, 'AnimalCell'),
 	quantity_of(Cell, VolConcept, dbo:'Person', VolConcept, TotalCount),!.
-	
+
 %%%%%   EVALUATION PLAN 2 - VOLUME OF GOLF BALLS IN LOCH NESS?
 qty_balls_loch_ness(TotalCount) :-
 	cyclify(VolConcept, 'volumeOfObject'),
