@@ -44,3 +44,5 @@
 :- ensure_loaded('plans/relativesize').
 :- ensure_loaded('plans/geographical').
 :- ensure_loaded('plans/calculations').
+:- ensure_loaded('plans/division_plan').
+:- ensure_loaded('plans/size_plan').
